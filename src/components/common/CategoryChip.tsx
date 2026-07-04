@@ -1,0 +1,31 @@
+// src/components/common/CategoryChip.tsx
+import React from 'react';
+import { TouchableOpacity, Text, GestureResponderEvent } from 'react-native';
+
+type CategoryChipProps = {
+  label: string;
+  selected?: boolean;
+  onPress?: (event: GestureResponderEvent) => void;
+  className?: string; // extra Tailwind classes
+  accessibilityLabel?: string;
+};
+
+/** Reusable chip component representing a selectable category. Uses design tokens via NativeWind classes. */
+export const CategoryChip = React.memo(({ label, selected = false, onPress, className = '', accessibilityLabel }: CategoryChipProps) => {
+  const baseClasses = 'px-6 py-2.5 rounded-full flex-row items-center justify-center shadow-sm';
+  const selectedClasses = selected ? 'bg-primary' : 'bg-surface-container-highest';
+  const textClasses = selected ? 'text-on-primary' : 'text-on-surface';
+  
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? label}
+      className={`${baseClasses} ${selectedClasses} ${className}`}
+    >
+      <Text className={`font-label-lg ${textClasses}`} numberOfLines={1}>{label}</Text>
+    </TouchableOpacity>
+  );
+});
+
+CategoryChip.displayName = 'CategoryChip';

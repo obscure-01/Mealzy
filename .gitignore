@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+.expo-shared/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Android Studio
+.idea/
+
+# Local AI Reports
+execution_directive 2
+execution_directive 3
+execution_directive.md
+final_report 1
+implementation_plan 2
+implementation_plan 3
+implementation_plan 4
+implementation_plan 5
+implementation_plan 6
+implementation_plan 7
+implementation_plan 8
+implementation_plan 9
+implementation_plan 10
+implementation_plan 11
+implementation_plan mealzy 1
+implementation_plan7
+mealzy_status_report 1
+walkthrough 1
