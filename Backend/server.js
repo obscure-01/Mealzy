@@ -3,11 +3,11 @@ dotenv.config();
 
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
-import refreshTokenRoutes from "./routes/refreshTokenRoutes.js"
+import authRoutes from "./routes/authRoutes.js"
 import CookieParser from "cookie-parser";
 
 
-const server_port = process.env.server_port
+const server_port = process.env.server_port;
 
 const server = express();
 
@@ -17,7 +17,13 @@ server.use(CookieParser());
 
 server.use("/api", userRoutes);
 
-server.use("/api", refreshTokenRoutes);
+server.use("/api", authRoutes);
+
+server.use((err, req, res, next) => {
+    console.error(err);
+
+    res.status(err.status || 500).json({message: err.message || "Internal Server Error"});
+});
 
 server.listen(server_port, (err) => {
     if (err) {

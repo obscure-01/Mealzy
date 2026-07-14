@@ -11,3 +11,9 @@ export async function findUser(token_id) {
     const result = await pool.query(sql, [token_id]);    
     return result.rows;
 }
+
+export async function deleteToken(token_id) {
+    const sql = "DELETE FROM refresh_tokens WHERE token_id = $1";
+    const result = await pool.query(sql, [token_id]);
+    return result;
+}
