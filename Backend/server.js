@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js"
+import itemRoutes from "./routes/itemRoutes.js";
 import CookieParser from "cookie-parser";
 
 
@@ -15,9 +16,11 @@ server.use(express.json());
 
 server.use(CookieParser());
 
+server.use("/api", authRoutes);
+
 server.use("/api", userRoutes);
 
-server.use("/api", authRoutes);
+server.use("/api", itemRoutes)
 
 server.use((err, req, res, next) => {
     console.error(err);

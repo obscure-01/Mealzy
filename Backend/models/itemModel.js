@@ -1,3 +1,4 @@
+import { it } from "vitest";
 import pool from "../config/db.js";
 
 export async function createItem(canteen_id, item_name, decription, price, image_url, category, is_vegetarian) {
@@ -6,11 +7,27 @@ export async function createItem(canteen_id, item_name, decription, price, image
     return result;
 }
 
-export async function getItem(item_id) {}
+export async function getItem(item_id) {
+    const sql = "SELECT * FROM items WHERE item_id = $1";
+    const result = await pool.query(sql, [item_id]);
+    return result;
+}
 
-export async function updateItem(item_id, fields, values) {}
+export async function updateItem(item_id, canteen_id, fields, values) {
+    const sql = `UPDATE items SET ${fields.join(", ")}, updated_at = current_timestamp() WHERE item_id = $${fields.length + 1} AND canteen_id = $$${fields.length + 2}`;
+    const result = await pool.query(sql, [...values, item_id, canteen_id]);
+    return result;
+}
 
-export async function deleteItem(item_id) {}
+export async function deleteItem(item_id, canteen_id) {
+    const sql = "DELETE FROM items WHERE item_id = $1 AND canteen_id = $2";
+    const result = await pool.query(sql, [item_id, canteen_id]);
+    return result;
+}
 
-export async function changeItemAvailability(item_id, is_available) {}
+export async function changeItemAvailability(item_id, canteen_id, is_available) {
+    const sql = "UPDATE items SET is_available = $1, updated_at = $2, updated_at = current_timestamp() WHERE item_id = $3 AND canteen_id = $4";
+    const result = await pool.query(sql, [is_available, item_id, canteen_id]);
+    return result; 
+}
 
