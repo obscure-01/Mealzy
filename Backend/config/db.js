@@ -1,4 +1,5 @@
 // check how .env is used after deployment
+// solved : don't need dotenv, services inject all the env variables before script runs
 import dotenv from "dotenv";
 import {Pool} from "pg";
 import { fileURLToPath } from "url";

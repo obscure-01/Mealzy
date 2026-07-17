@@ -5,7 +5,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/item/:item_id", itemController.getItem);
+router.get("/item/:item_id", auth, itemController.getItem);
 router.post("/item", auth, verifyRoles("vendor", "admin"), itemController.createItem);
 router.put("/item/:item_id", auth, verifyRoles("vendor", "admin"), itemController.updateItem);
 router.put("/item/available/:item_id", auth, verifyRoles("vendor", "admin"), itemController.changeAvailability);

@@ -45,8 +45,6 @@ export async function getItem(req, res, next) {
             return res.status(400).json({message:"item_id must be a number"});      
         }
         
-        
-        
         const [item] = await itemModel.getItem(item_id);
         
         if (!item) {
@@ -179,10 +177,7 @@ export async function changeAvailability(req, res, next) {
             return res.status(400).json({message: "Invalid item_id"});
         }
         
-        let {is_available} = req.body;  
-        
-        console.log(is_available);
-        
+        let {is_available} = req.body;          
         
         if (typeof is_available !== "boolean") {
             return res.status(400).json({message:"is_available must be a boolean"});

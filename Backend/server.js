@@ -5,6 +5,7 @@ import express from "express";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js"
 import itemRoutes from "./routes/itemRoutes.js";
+import menuRoutes from "./routes/menuRoutes.js";
 import CookieParser from "cookie-parser";
 
 
@@ -20,7 +21,9 @@ server.use("/api", authRoutes);
 
 server.use("/api", userRoutes);
 
-server.use("/api", itemRoutes)
+server.use("/api", itemRoutes);
+
+server.use("/api", menuRoutes);
 
 server.use((err, req, res, next) => {
     console.error(err);

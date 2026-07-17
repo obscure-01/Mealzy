@@ -4,7 +4,6 @@
 import { describe, beforeEach, test, expect, vi } from "vitest";
 import * as itemController from "../controllers/itemController.js";
 import * as itemModel from "../models/itemModel.js";
-import { response } from "express";
 
 vi.mock("../models/itemModel.js");
 
@@ -177,6 +176,7 @@ describe("getItem", () => {
         expect(next).not.toHaveBeenCalled();
     });
 
+    // works with true, therefore values that can be converted to Number
     test.each([undefined, "abc"])("return 400 if item_id is not number", async (value) => {
         req.params.item_id = value;
 
