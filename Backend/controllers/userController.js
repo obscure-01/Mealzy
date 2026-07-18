@@ -3,6 +3,7 @@ import {hash} from "bcrypt";
 import jwt from "jsonwebtoken";
 
 // do not have a role input in the form
+// used in the app
 export async function createUser(req, res) {
     // deal with profile picture later, add canteen id
     const {name, email, password, phone_number, role} = req.body;

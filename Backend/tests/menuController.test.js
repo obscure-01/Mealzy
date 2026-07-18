@@ -263,10 +263,6 @@ describe("updateMenu", async () => {
 
         await updateMenu(req, res, next);
         
-        console.log(next.mock);
-        console.log(res.status.mock.calls);
-        console.log(res.json.mock.calls);
-
         expect(menuModel.updateMenu).not.toHaveBeenCalled()
 
         expect(res.status).toHaveBeenCalledWith(400);

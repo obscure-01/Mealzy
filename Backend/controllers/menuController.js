@@ -1,5 +1,6 @@
 import * as menuModel from "../models/menuModel.js";
 
+// used in the app
 export async function getAvailableMenu(req, res, next) {
     try {
         let canteen_id = Number(req.params.canteen_id); 
@@ -22,6 +23,8 @@ export async function getAvailableMenu(req, res, next) {
 }
 
 // how does the admin access use this if the canteen_id is attached to the JWT
+// solved add middleware that assigns add canteen id to the req
+// used in the app
 export async function getCompleteMenu(req, res, next) {
     try {
         const canteen_id = Number(req.canteen_id);        
@@ -43,6 +46,7 @@ export async function getCompleteMenu(req, res, next) {
     }
 }
 
+// used in the app
 export async function updateMenu(req, res, next) {
     try {
         const canteen_id = Number(req.canteen_id);

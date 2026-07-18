@@ -3,6 +3,7 @@
 import { json } from "express";
 import * as itemModel from "../models/itemModel.js";
 
+// used in the app
 export async function createItem(req, res, next) {
     try {
 
@@ -28,7 +29,7 @@ export async function createItem(req, res, next) {
         // create image url here
         const image_url = image;
 
-        const result = await itemModel.createItem(canteen_id, item_name, description, price, image_url, category, is_vegetarian);
+        await itemModel.createItem(canteen_id, item_name, description, price, image_url, category, is_vegetarian);
         
         res.status(201).json({message:"Created new item"})
     }
@@ -37,6 +38,7 @@ export async function createItem(req, res, next) {
     }
 }
 
+// used in the app
 export async function getItem(req, res, next) {
     try {
         const item_id = Number(req.params.item_id);
@@ -58,6 +60,7 @@ export async function getItem(req, res, next) {
     }
 }
 
+// used in the app
 export async function updateItem(req, res, next) {
     try {
         const canteen_id = Number(req.canteen_id);
@@ -133,6 +136,8 @@ export async function updateItem(req, res, next) {
     }
 }
 
+
+// used in the app
 export async function deleteItem(req, res, next) {
     try {
 
@@ -162,6 +167,7 @@ export async function deleteItem(req, res, next) {
         
 }
 
+// used in the app
 export async function changeAvailability(req, res, next) {
     try {
 
