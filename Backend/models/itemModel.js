@@ -31,3 +31,8 @@ export async function changeItemAvailability(item_id, canteen_id, is_available) 
     return result; 
 }
 
+export async function getMultipleItems(positions, values) {
+    const sql = `SELECT * FROM items WHERE item_id IN (${positions.join(", ")});`;
+    const result = await pool.query(sql, values);
+    return result.rows;
+}
