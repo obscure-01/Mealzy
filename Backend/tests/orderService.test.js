@@ -29,12 +29,9 @@ describe("orderService createOrder", () => {
     })
 
     test("reutrns correct", async () => {
-        orderModel.createOrder.mockResolvedValue(4)
+        orderModel.createOrder.mockResolvedValue(4);
 
         await createOrder(order_values, order_items);
-
-        console.log(orderModel.createOrderItems.mock.calls);
-        
 
         expect(orderModel.createOrder).toHaveBeenCalledWith({
                 query,
@@ -49,17 +46,20 @@ describe("orderService createOrder", () => {
             ["($1, $2, $3, $4)","($5, $6, $7, $8)","($9, $10, $11, $12)"],
             [4,1,1,40,4,2,2,50,4,3,3,60]
         );
+
+        expect(query).toHaveBeenCalledWith("COMMIT");
 
         expect(release).toHaveBeenCalled();
     })
 
     test("when error occurs", async () => {
-        orderModel.createOrder.mockResolvedValue(4)
+        const err = new Error("new error");
+        orderModel.createOrder.mockRejectedValue(err);
 
-        await createOrder(order_values, order_items);
-
-        console.log(orderModel.createOrderItems.mock.calls);
-        
+        try {
+            await createOrder(order_values, order_items);        
+        }
+        catch (err) {}
 
         expect(orderModel.createOrder).toHaveBeenCalledWith({
                 query,
@@ -67,6 +67,29 @@ describe("orderService createOrder", () => {
             }, 
             order_values
         );
+
+        expect(query).toHaveBeenCalledWith("ROLLBACK");
+
+        expect(release).toHaveBeenCalled();
+    })
+
+    test("when error occurs in createorderitem", async () => {
+        orderModel.createOrder.mockResolvedValue(4);
+        const err = new Error("new error");
+        orderModel.createOrderItems.mockRejectedValue({});
+
+        try {
+            await createOrder(order_values, order_items);        
+        }
+        catch (err) {}
+
+        expect(orderModel.createOrder).toHaveBeenCalledWith({
+                query,
+                release
+            }, 
+            order_values
+        );
+
         expect(orderModel.createOrderItems).toHaveBeenCalledWith({
                 query,
                 release
@@ -74,6 +97,8 @@ describe("orderService createOrder", () => {
             ["($1, $2, $3, $4)","($5, $6, $7, $8)","($9, $10, $11, $12)"],
             [4,1,1,40,4,2,2,50,4,3,3,60]
         );
+
+        expect(query).toHaveBeenCalledWith("ROLLBACK");
 
         expect(release).toHaveBeenCalled();
     })

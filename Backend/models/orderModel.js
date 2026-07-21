@@ -17,6 +17,14 @@ export async function getOrder() {
     
 }
 
+export async function getUserOrderHistory() {
+    
+}
+
+export async function getCanteenOrderHistory() {
+    
+}
+
 export async function cancleOrder() {
     
 }
@@ -28,5 +36,3 @@ export async function acceptOrder() {
 export async function cancelOrder() {
     
 }
-
-// accept

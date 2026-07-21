@@ -1,31 +1,6 @@
 import * as itemModel from "../models/itemModel.js";
 import * as orderService from "../services/orderService.js";
 
-// req = {
-//      user_id,
-// 	    bodt : { order : {
-//          canteen_id,
-// 		    items : {
-//             "2" : 4,
-//             "3" : 1
-//           }
-//        }
-//     }   
-// }
-
-//     orders
-//     user_id 
-//     canteen_id 
-//     total_price  
-
-
-//     order_items
-//     order_id 
-//     item_id 
-//     quantity 
-//     price_at_order 
-
-
 export async function createOrder(req, res, next) {
     try {
         const user_id = Number(req.user_id);
@@ -47,11 +22,11 @@ export async function createOrder(req, res, next) {
         let values = [];
 
         for (let item in items) {
-            const item = Number(item);
-            if (!Number.isInteger(item)) {
+            const item_id = Number(item);
+            if (!Number.isInteger(item_id)) {
                 return res.status(400).json({message:"invalid user_id"});
             }
-            values.push(item);
+            values.push(item_id);
             positions.push(`$${values.length}`);
         }
 
@@ -63,30 +38,82 @@ export async function createOrder(req, res, next) {
         }
 
         let total_price = 0;
-
-        // create a new array which has result items and attach the quantity to it
         
         let order_items = [];
 
-        result.forEach(item => {
+        for (const item of result) {
             const item_qty = Number(items[item["item_id"]]);
+            console.log(item_qty);
+            
 
-            if (typeof item_qty !== "number") {
+            if (!Number.isInteger(item_qty)) {
+                console.log("found");
                 return res.status(400).json({message:"Invalid qunatity"}); 
             }
 
-            total_price += item_qty * Number(item[price]);
+            total_price += item_qty * Number(item["price"]);
             
             const new_item = item;
             new_item.quantity = item_qty;
             order_items.push(new_item);
-        });
+        }
 
-        await orderService([user_id, canteen_id, total_price], order_items);
+        await orderService.createOrder([user_id, canteen_id, total_price], order_items);
+
+        return res.status(200).json({message: "order placed"});
 
     }
     catch (err) {
         next(err);
     }
+    
+}
+
+export async function getUserOrder(req, res, next) {
+    
+    const user_id = Number(req.user_id);
+
+    if (!Number.isInteger(user_id)) {
+        return res.status(400).json({message:"Invalid user_id"});
+    }
+    
+    const order_id = Number(req.params.order_id);
+
+    if (!Number.isInteger(order_id)) {
+        return res.status(400).json({message:"Invalid order_id"});
+    }
+}
+
+export async function getCanteenOrder(req, res, next) {
+    
+    const canteen_id = Number(req.canteen_id);
+
+    if (!Number.isInteger(canteen_id)) {
+        return res.status(400).json({message:"Invalid canteen_id"});
+    }
+    
+    const order_id = Number(req.params.order_id);
+
+    if (!Number.isInteger(order_id)) {
+        return res.status(400).json({message:"Invalid order_id"});
+    }
+
+
+
+}
+
+export async function getUserOrderHistory(req, res, next) {
+    
+}
+
+export async function getCanteenOrderHistory(req, res, next) {
+    
+}
+
+export async function cancleOrder(req, res, next) {
+    
+}
+
+export async function acceptOrder(req, res, next) {
     
 }

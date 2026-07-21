@@ -1,4 +1,3 @@
-import { it } from "vitest";
 import pool from "../config/db.js";
 
 export async function createItem(canteen_id, item_name, decription, price, image_url, category, is_vegetarian) {
