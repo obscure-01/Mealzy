@@ -1,11 +1,14 @@
 import {vi, test, expect, beforeEach, describe} from "vitest";
-import {createOrder} from "../services/orderService.js";
+import {createOrder, getUserOrderDetails, getCanteenOrderDetails, getUserOrderHistory, getCanteenOrderHistory} from "../services/orderService.js";
 import * as orderModel from "../models/orderModel.js";
+import * as userModel from "../models/userModel.js"
 import pool from "../config/db.js";
+
 
 vi.mock("../config/db.js");
 vi.mock("../models/orderModel.js");
-
+vi.mock("../models/userModel.js");
+ 
 describe("orderService createOrder", () => {
     let order_values;
     let order_items;
@@ -104,3 +107,129 @@ describe("orderService createOrder", () => {
     })
 
 })
+
+
+describe("getUserOrderDetails", () => {
+    let user_id;
+    let order_id;
+
+    beforeEach(() => {
+        user_id = 1;
+        order_id = 2;
+
+        vi.clearAllMocks();
+    })
+
+    test("return object when successfully retreiving values", async () => {
+        orderModel.getUserOrder.mockResolvedValue({rowCount : 1, rows : [1]});
+
+        await getUserOrderDetails(user_id, order_id);
+
+        expect(orderModel.getUserOrder).toHaveBeenCalledWith(1,2);
+        expect(orderModel.getOrderItems).toHaveBeenCalledWith(2);
+
+        
+    })
+
+
+    test("return empty object when unsuccessfully retreiving values", async () => {
+        orderModel.getUserOrder.mockResolvedValue({rowCount : 0 });
+
+        await getUserOrderDetails(user_id, order_id);
+
+        expect(orderModel.getUserOrder).toHaveBeenCalledWith(1,2);
+        expect(orderModel.getOrderItems).not.toHaveBeenCalled();   
+    })
+
+})
+
+describe("getCanteenOrderDetails", () => {
+    let canteen_id;
+    let order_id;
+
+    beforeEach(() => {
+        canteen_id = 1;
+        order_id = 2;
+
+        vi.clearAllMocks();
+    })
+
+    test("return object when successfully retreiving values", async () => {
+        orderModel.getCanteenOrder.mockResolvedValue({rowCount : 1, rows : [{user_id : 1}]});
+        userModel.getUser.mockResolvedValue({});
+                    
+        await getCanteenOrderDetails(canteen_id, order_id);
+
+        expect(orderModel.getCanteenOrder).toHaveBeenCalledWith(1,2);
+        expect(userModel.getUser).toHaveBeenCalledWith(1);
+        expect(orderModel.getOrderItems).toHaveBeenCalledWith(2);
+
+        
+    })
+
+    test("return empty object when successfully retreiving values", async () => {
+        orderModel.getCanteenOrder.mockResolvedValue({rowCount : 0 });
+
+        await getCanteenOrderDetails(canteen_id, order_id);
+
+        expect(orderModel.getCanteenOrder).toHaveBeenCalledWith(1,2);
+        expect(orderModel.getOrderItems).not.toHaveBeenCalled();   
+    })
+
+})
+
+describe("getUserOrderHistory", () => {
+    let user_id;
+
+    beforeEach(() => {
+        user_id = 1
+
+        vi.clearAllMocks();
+    }) 
+
+    test("return order details successfully", async () =>  {
+        orderModel.getAllUserOrders.mockResolvedValue({rowCount : 1, rows : [
+            {order_id : 1, status : "pending"},
+            {order_id : 2, status : "pending"},
+            {order_id : 3, status : "pending"}
+        ]})
+        orderModel.getMultipleOrdersItems.mockResolvedValue([
+            {order_id : 1, item_name : "burger"},
+            {order_id : 2, item_name : "plant"},
+            {order_id : 3, item_name : "zombie"}
+        ])
+
+        await getUserOrderHistory(user_id);
+
+        expect(orderModel.getMultipleOrdersItems).toHaveBeenCalledWith(["$1","$2", "$3"], [1,2,3]);
+    })
+})
+
+
+describe("getCanteenOrderHistory", () => {
+    let canteen_id;
+
+    beforeEach(() => {
+        canteen_id = 1
+
+        vi.clearAllMocks();
+    }) 
+
+    test("return order details successfully", async () =>  {
+        orderModel.getCanteenOrderHistory.mockResolvedValue({rowCount : 1, rows : [
+            {order_id : 1, status : "pending"},
+            {order_id : 2, status : "pending"},
+            {order_id : 3, status : "pending"}
+        ]})
+        orderModel.getMultipleOrdersItems.mockResolvedValue([
+            {order_id : 1, item_name : "burger"},
+            {order_id : 2, item_name : "plant"},
+            {order_id : 3, item_name : "zombie"}
+        ])
+
+        await getCanteenOrderHistory(canteen_id);
+
+        expect(orderModel.getMultipleOrdersItems).toHaveBeenCalledWith(["$1","$2", "$3"], [1,2,3]);
+    })
+})
+

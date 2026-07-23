@@ -1,4 +1,4 @@
-import {createOrder} from "../controllers/orderController.js";
+import {createOrder, getUserOrder, getUserOrderHistory, getCanteenOrderHistory, cancleOrderUser, cancleOrderCanteen, acceptOrder} from "../controllers/orderController.js";
 import * as orderService from "../services/orderService.js";
 import { getMultipleItems } from "../models/itemModel.js";
 import {vi, test, expect, beforeEach, describe} from "vitest";
@@ -66,8 +66,6 @@ describe("OrderController create order",() => {
 
 
         await createOrder(req, res, next);
-
-        console.log(next.mock.calls);
         
         expect(getMultipleItems).not.toHaveBeenCalled();
         expect(orderService.createOrder).not.toHaveBeenCalled();
@@ -94,10 +92,7 @@ describe("OrderController create order",() => {
         ])
 
 
-        await createOrder(req, res, next);
-        
-        console.log(next.mock.calls);
-        
+        await createOrder(req, res, next);        
 
         expect(getMultipleItems).toHaveBeenCalledWith(["$1","$2","$3"],[1,2,3,]);
         expect(orderService.createOrder).not.toHaveBeenCalled();
@@ -108,4 +103,249 @@ describe("OrderController create order",() => {
         expect(next).not.toHaveBeenCalled();
     });
 
+})
+
+describe("getUserOrder", () => {
+    let req;
+    let res;
+    let next;
+
+    beforeEach(() => {
+        req = {
+            user_id : 1,
+            params : {
+                order_id : 1
+            }
+        }
+
+        res = {
+            status : vi.fn().mockReturnThis(),
+            json : vi.fn()
+        }
+
+        next = vi.fn();
+
+        vi.clearAllMocks();
+    })
+
+
+    test("return 200 when successfully returning order", async () => {
+        orderService.getUserOrderDetails.mockResolvedValue({info : "order_data.rows[0]", items : "order_item_data"});
+
+        await getUserOrder(req, res, next);
+
+        expect(orderService.getUserOrderDetails).toHaveBeenCalledWith(1,1);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({"order" : {info : "order_data.rows[0]", items : "order_item_data"}});
+    })
+})
+
+
+describe("getUserOrderHistory", () => {
+    let req;
+    let res;
+    let next;
+
+    beforeEach(() => {
+        req = {
+            user_id : 1
+        }
+
+        res = {
+            status : vi.fn().mockReturnThis(),
+            json : vi.fn()
+        }
+
+        next = vi.fn();
+
+        vi.clearAllMocks();
+    })
+
+
+    test("return 200 when successfully returning order", async () => {
+        orderService.getUserOrderHistory.mockResolvedValue([
+            { order_id: 1, status: 'pending', items: [ [Object] ] },
+            { order_id: 2, status: 'pending', items: [ [Object] ] },
+            { order_id: 3, status: 'pending', items: [ [Object] ] }
+        ])
+
+        await getUserOrderHistory(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({order_history : [
+            { order_id: 1, status: 'pending', items: [ [Object] ] },
+            { order_id: 2, status: 'pending', items: [ [Object] ] },
+            { order_id: 3, status: 'pending', items: [ [Object] ] }
+        ]});
+    })
+
+
+    test("return 404 when successfully returning order", async () => {
+        orderService.getUserOrderHistory.mockResolvedValue([])
+
+        await getUserOrderHistory(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({message:"No orders placed yet"});
+    })
+})
+
+describe("getCanteenOrderHistory", () => {
+    let req;
+    let res;
+    let next;
+
+    beforeEach(() => {
+        req = {
+            canteen_id : 1
+        }
+
+        res = {
+            status : vi.fn().mockReturnThis(),
+            json : vi.fn()
+        }
+
+        next = vi.fn();
+
+        vi.clearAllMocks();
+    })
+
+
+    test("return 200 when successfully returning order", async () => {
+        orderService.getCanteenOrderHistory.mockResolvedValue([
+            { order_id: 1, status: 'pending', items: [ [Object] ] },
+            { order_id: 2, status: 'pending', items: [ [Object] ] },
+            { order_id: 3, status: 'pending', items: [ [Object] ] }
+        ])
+
+        await getCanteenOrderHistory(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({order_history : [
+            { order_id: 1, status: 'pending', items: [ [Object] ] },
+            { order_id: 2, status: 'pending', items: [ [Object] ] },
+            { order_id: 3, status: 'pending', items: [ [Object] ] }
+        ]});
+    })
+
+
+    test("return 404 when unsuccessfully returning order", async () => {
+        orderService.getCanteenOrderHistory.mockResolvedValue([])
+
+        await getCanteenOrderHistory(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({message:"No orders placed yet"});
+    })
+})
+
+describe("cancleOrderUser", () => {
+    let req;
+    let res;
+    let next;
+
+    beforeEach(() => {
+        req = {
+            user_id : 1,
+            params : {
+                order_id : 1
+            }
+        }
+
+        res = {
+            status : vi.fn().mockReturnThis(),
+            json : vi.fn()
+        }
+
+        next = vi.fn();
+
+        vi.clearAllMocks();
+    })
+
+    test("return 200 when successfully cancelled", async () => {
+
+        orderService.cancelOrderUser.mockResolvedValue({rowCount : 1})
+         
+        await cancleOrderUser(req, res, next);
+
+        expect(orderService.cancelOrderUser).toHaveBeenCalledWith(1,1);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({message:"Order canceled"});
+    })
+})
+
+describe("cancleOrderCanteen", () => {
+    let req;
+    let res;
+    let next;
+
+    beforeEach(() => {
+        req = {
+            user_id : 1,
+            canteen_id : 1,
+            params : {
+                order_id : 1
+            }
+        }
+
+        res = {
+            status : vi.fn().mockReturnThis(),
+            json : vi.fn()
+        }
+
+        next = vi.fn();
+
+        vi.clearAllMocks();
+    })
+
+    test("return 200 when successfully cancelled", async () => {
+
+        orderService.cancleOrderCanteen.mockResolvedValue({rowCount : 1})
+         
+        await cancleOrderCanteen(req, res, next);
+
+        expect(orderService.cancleOrderCanteen).toHaveBeenCalledWith(1,1);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({message:"Order canceled"});
+    })
+})
+
+describe("acceptOrder", () => {
+    let req;
+    let res;
+    let next;
+
+    beforeEach(() => {
+        req = {
+            user_id : 1,
+            canteen_id : 1,
+            params : {
+                order_id : 1
+            }
+        }
+
+        res = {
+            status : vi.fn().mockReturnThis(),
+            json : vi.fn()
+        }
+
+        next = vi.fn();
+
+        vi.clearAllMocks();
+    })
+
+    test("return 200 when successfully accepted", async () => {
+
+        orderService.acceptOrder.mockResolvedValue({rowCount : 1})
+        
+        await acceptOrder(req, res, next);
+
+        expect(orderService.acceptOrder).toHaveBeenCalledWith(1,1,1);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({message:"Order accepted"});
+    })
 })

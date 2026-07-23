@@ -1,3 +1,5 @@
+// add "preparing and ready and completed routes"
+
 import * as itemModel from "../models/itemModel.js";
 import * as orderService from "../services/orderService.js";
 
@@ -42,12 +44,9 @@ export async function createOrder(req, res, next) {
         let order_items = [];
 
         for (const item of result) {
-            const item_qty = Number(items[item["item_id"]]);
-            console.log(item_qty);
-            
+            const item_qty = Number(items[item["item_id"]]);            
 
             if (!Number.isInteger(item_qty)) {
-                console.log("found");
                 return res.status(400).json({message:"Invalid qunatity"}); 
             }
 
@@ -70,50 +69,188 @@ export async function createOrder(req, res, next) {
 }
 
 export async function getUserOrder(req, res, next) {
-    
-    const user_id = Number(req.user_id);
+    try {
 
-    if (!Number.isInteger(user_id)) {
-        return res.status(400).json({message:"Invalid user_id"});
+        const user_id = Number(req.user_id);
+        
+        if (!Number.isInteger(user_id)) {
+            return res.status(400).json({message:"Invalid user_id"});
+        }
+        
+        const order_id = Number(req.params.order_id);
+        
+        if (!Number.isInteger(order_id)) {
+            return res.status(400).json({message:"Invalid order_id"});
+        }
+        
+        const order = await orderService.getUserOrderDetails(user_id, order_id);
+        
+        if (order.notFound) {
+            return res.status(404).json({message:"order not found"});
+        }
+        
+        return res.status(200).json({"order" : order}); 
     }
-    
-    const order_id = Number(req.params.order_id);
-
-    if (!Number.isInteger(order_id)) {
-        return res.status(400).json({message:"Invalid order_id"});
+    catch (err) {
+        next(err);
     }
 }
 
 export async function getCanteenOrder(req, res, next) {
-    
-    const canteen_id = Number(req.canteen_id);
+    try {
 
-    if (!Number.isInteger(canteen_id)) {
-        return res.status(400).json({message:"Invalid canteen_id"});
+        const canteen_id = Number(req.canteen_id);
+        
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+        
+        const order_id = Number(req.params.order_id);
+        
+        if (!Number.isInteger(order_id)) {
+            return res.status(400).json({message:"Invalid order_id"});
+        }
+        
+        const order = await orderService.getCanteenOrderDetails(canteen_id, order_id);
+        
+        if (order.notFound) {
+            return res.status(404).json({message:"order not found"});
+        }
+        
+        return res.status(200).json({"order" : order}); 
     }
-    
-    const order_id = Number(req.params.order_id);
-
-    if (!Number.isInteger(order_id)) {
-        return res.status(400).json({message:"Invalid order_id"});
+    catch (err) {
+        next(err);
     }
-
-
 
 }
 
 export async function getUserOrderHistory(req, res, next) {
-    
+    try {
+        const user_id = Number(req.user_id);
+        
+        if (!Number.isInteger(user_id)) {
+            return res.status(400).json({message:"Invalid user_id"});
+        }
+
+        const orders = await orderService.getUserOrderHistory(user_id);
+
+        if (orders.length === 0) {
+            return res.status(404).json({message:"No orders placed yet"});
+        }
+
+        return res.status(200).json({order_history : orders});
+
+    }
+    catch (err) {
+        next(err);
+    }
 }
 
 export async function getCanteenOrderHistory(req, res, next) {
-    
+    try {
+        const canteen_id = Number(req.canteen_id);
+        
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+
+        const orders = await orderService.getCanteenOrderHistory(canteen_id);
+
+        if (orders.length === 0) {
+            return res.status(404).json({message:"No orders placed yet"});
+        }
+
+        return res.status(200).json({order_history : orders});
+
+    }
+    catch (err) {
+        next(err);
+    }
 }
 
-export async function cancleOrder(req, res, next) {
+export async function cancleOrderUser(req, res, next) {
+ 
+    const user_id = Number(req.user_id);
+
+    if (!Number.isInteger(user_id)) {
+            return res.status(400).json({message:"Invalid user_id"});
+    }
     
+    const order_id = Number(req.params.order_id);
+        
+    if (!Number.isInteger(order_id)) {
+        return res.status(400).json({message:"Invalid order_id"});
+    }
+
+    const result = await orderService.cancelOrderUser(user_id, order_id);
+
+    if (result.rowCount === 0) {
+        return res.status(403).json({message:"Could not cancel order"});
+    }
+
+    return res.status(200).json({message:"Order canceled"});
+}
+
+export async function cancleOrderCanteen(req, res, next) {
+    try {
+
+        const order_id = Number(req.params.order_id);
+        
+        if (!Number.isInteger(order_id)) {
+            return res.status(400).json({message:"Invalid order_id"});
+        }
+        
+        const canteen_id = Number(req.canteen_id);
+        
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+        
+        const result = await orderService.cancleOrderCanteen(canteen_id, order_id);
+        
+        if (result.rowCount === 0) {
+            return res.status(403).json({message:"Could not cancel order"});
+        }
+        
+        return res.status(200).json({message:"Order canceled"});
+    }
+    catch (err) {
+        next(err);
+    }
 }
 
 export async function acceptOrder(req, res, next) {
+    try {
+
+        const user_id = Number(req.user_id);
+        
+        if (!Number.isInteger(user_id)) {
+            return res.status(400).json({message:"Invalid user_id"});
+        }
+        
+        const canteen_id = Number(req.canteen_id);
+        
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+        
+        const order_id = Number(req.params.order_id);
+        
+        if (!Number.isInteger(order_id)) {
+            return res.status(400).json({message:"Invalid order_id"});
+        }
+        
+        const result = await orderService.acceptOrder(user_id, canteen_id, order_id);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({message:"order not found"});
+        }
     
+        return res.status(200).json({message:"Order accepted"});
+
+    }
+    catch (err) {
+        next(err);
+    }
 }

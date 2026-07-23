@@ -12,3 +12,9 @@ export async function findUserByPhoneNumber(phone_number) {
     return result.rows;
 }
 
+export async function getUser(user_id) {
+    const sql = "SELECT (name, phone_number, email,profile_picture) FROM users WHERE user_id = $1";
+    const result = await pool.query(sql, [user_id]);
+    return result;
+}
+

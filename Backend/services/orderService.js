@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import * as userModel from "../models/userModel.js"
 import * as orderModel from "../models/orderModel.js";
 
 export async function createOrder(order_values, order_items) {
@@ -29,3 +30,142 @@ export async function createOrder(order_values, order_items) {
         client.release();
     }
 }
+
+export async function getUserOrderDetails(user_id, order_id) {
+
+    const order_data = await orderModel.getUserOrder(user_id, order_id);
+
+    if (order_data.rowCount === 0) {
+        return {notFound:true};
+    }
+    
+    // return rows of data as a list
+    const order_item_data = await orderModel.getOrderItems(order_id);
+
+    const details = {
+            info : order_data.rows[0],
+            items : order_item_data
+    }
+
+    return details;
+}
+
+
+// can be more optimized with lower queries frequncy
+export async function getCanteenOrderDetails(canteen_id, order_id) {
+    
+    const order_data = await orderModel.getCanteenOrder(canteen_id, order_id);
+
+    if (order_data.rowCount === 0) {
+        return {notFound:true};
+    }    
+
+    const user_id = order_data.rows[0].user_id;
+
+    const user_info = await userModel.getUser(user_id);
+
+    // return rows of data as a list
+    const order_item_data = await orderModel.getOrderItems(order_id);
+
+    const details = {
+            order_info : order_data.rows[0],
+            user_info : user_info,
+            items : order_item_data
+    }
+
+    return details;
+}
+
+
+export async function getUserOrderHistory(user_id) {
+    
+    const orders = await orderModel.getAllUserOrders(user_id);
+
+    if (orders.rowCount === 0) {
+        return [];
+    }
+
+    let positions = [];
+    let values = [];
+
+    for (const order of orders.rows) {
+        positions.push(`$${values.length + 1}`);
+        values.push(order.order_id);
+    }
+
+    const order_items = await orderModel.getMultipleOrdersItems(positions, values);
+
+    let order_map = new Map();
+
+    for (const order of orders.rows) {
+        order_map.set(order.order_id, {
+            ...order,
+            items : []
+        })
+    }
+
+    for (const item of order_items) {
+        order_map.get(item.order_id).items.push(item);
+    }
+
+    const result = [...order_map.values()];
+
+    return result;
+}
+
+export async function getCanteenOrderHistory(canteen_id) {
+    const orders = await orderModel.getCanteenOrderHistory(canteen_id);
+
+    if (orders.rowCount === 0) {
+        return [];
+    }
+
+    let positions = [];
+    let values = [];
+
+    for (const order of orders.rows) {
+        positions.push(`$${values.length + 1}`);
+        values.push(order.order_id);
+    }
+
+    const order_items = await orderModel.getMultipleOrdersItems(positions, values);
+
+    let order_map = new Map();
+
+    for (const order of orders.rows) {
+        order_map.set(order.order_id, {
+            ...order,
+            items : []
+        })
+    }
+
+    for (const item of order_items) {
+        order_map.get(item.order_id).items.push(item);
+    }
+
+    const result = [...order_map.values()];
+
+    return result;
+}
+
+
+export async function cancelOrderUser(user_id, order_id) {
+
+    const result = await orderModel.cancelOrderUser(user_id, order_id);
+
+    return result;
+} 
+
+export async function cancleOrderCanteen(canteen_id, order_id) {
+
+    const result = await orderModel.cancelOrderCanteen(canteen_id, order_id);
+
+    return result;
+} 
+
+export async function acceptOrder(user_id, canteen_id, order_id) {
+
+    const result = await orderModel.acceptOrder(user_id, canteen_id, order_id);
+
+    return result;
+} 
