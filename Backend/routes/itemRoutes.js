@@ -1,0 +1,14 @@
+import * as itemController from "../controllers/itemController.js";
+import auth from "../middleware/authMiddleware.js";
+import verifyRoles from "../middleware/verifyRolesMiddlleware.js";
+import express from "express";
+
+const router = express.Router();
+
+router.get("/item/:item_id", auth, itemController.getItem);
+router.post("/item", auth, verifyRoles("vendor", "admin"), itemController.createItem);
+router.put("/item/:item_id", auth, verifyRoles("vendor", "admin"), itemController.updateItem);
+router.put("/item/available/:item_id", auth, verifyRoles("vendor", "admin"), itemController.changeAvailability);
+router.delete("/item/:item_id", auth, verifyRoles("vendor", "admin"), itemController.deleteItem);
+
+export default router;
