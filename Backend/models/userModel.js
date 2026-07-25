@@ -15,6 +15,23 @@ export async function findUserByPhoneNumber(phone_number) {
 export async function getUser(user_id) {
     const sql = "SELECT (name, phone_number, email,profile_picture) FROM users WHERE user_id = $1";
     const result = await pool.query(sql, [user_id]);
+    return result.rows;
+}
+
+export async function updateUser(user_id, fields, values) {
+    const sql = `UPDATE users SET ${fields.join(', ')} WHERE user_id = $${values.length + 1}`
+    const result = await pool.query(sql, [...values, user_id]);
     return result;
 }
 
+export async function deleteUser(user_id, fields, values) {
+    const sql = `DELETE FROM users WHERE user_id = $1`
+    const result = await pool.query(sql, [user_id]);
+    return result;
+}
+
+export async function changeRoles(role, user_id) {
+    const sql = "UPDATE users SET role = $1 WHERE user_id = $2";
+    const result = await pool.query(sql, [role, user_id]);
+    return result;
+}
