@@ -73,3 +73,16 @@ export async function acceptOrder(user_id, canteen_id, order_id) {
     const result = await pool.query(sql, [user_id, canteen_id, order_id]);
     return result;
 }
+
+
+export async function orderPreparing(canteen_id, order_id) {
+    const sql = `UPDATE orders SET status = "preparing" WHERE order_id = $1 AND canteen_id = $2`;
+    const result = await pool.query(sql, [order_id, canteen_id]);
+    return result;
+}
+
+export async function orderCompleted(canteen_id, order_id) {
+    const sql = `UPDATE orders SET status = "completed" WHERE order_id = $1 AND canteen_id = $2`;
+    const result = await pool.query(sql, [order_id, canteen_id]);
+    return result;
+}

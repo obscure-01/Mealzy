@@ -1,5 +1,3 @@
-// add "preparing and ready and completed routes"
-
 import * as itemModel from "../models/itemModel.js";
 import * as orderService from "../services/orderService.js";
 
@@ -249,6 +247,62 @@ export async function acceptOrder(req, res, next) {
     
         return res.status(200).json({message:"Order accepted"});
 
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+export async function orderPreparing(req, res, next) {
+    try {
+
+        const order_id = Number(req.params.order_id);
+        
+        if (!Number.isInteger(order_id)) {
+            return res.status(400).json({message:"Invalid order_id"});
+        }
+        
+        const canteen_id = Number(req.canteen_id);
+        
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+        
+        const result = await orderService.orderPreparing(canteen_id, order_id);
+        
+        if (result.rowCount === 0) {
+            return res.status(403).json({message:"Could not start preparing order"});
+        }
+        
+        return res.status(200).json({message:"Order is being preparing now"});
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+export async function orderCompleted(req, res, next) {
+    try {
+
+        const order_id = Number(req.params.order_id);
+        
+        if (!Number.isInteger(order_id)) {
+            return res.status(400).json({message:"Invalid order_id"});
+        }
+        
+        const canteen_id = Number(req.canteen_id);
+        
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+        
+        const result = await orderService.orderCompleted(canteen_id, order_id);
+        
+        if (result.rowCount === 0) {
+            return res.status(403).json({message:"Could not complete order"});
+        }
+        
+        return res.status(200).json({message:"Order completed"});
     }
     catch (err) {
         next(err);

@@ -169,3 +169,17 @@ export async function acceptOrder(user_id, canteen_id, order_id) {
 
     return result;
 } 
+
+export async function orderPreparing(canteen_id, order_id) {
+
+    const result = await orderModel.orderPreparing(canteen_id, order_id);
+
+    return result;
+} 
+
+export async function orderCompleted(canteen_id, order_id) {
+
+    const result = await orderModel.orderCompleted(canteen_id, order_id);
+
+    return result;
+} 
