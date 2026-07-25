@@ -1,4 +1,3 @@
-import { it } from "vitest";
 import pool from "../config/db.js";
 
 export async function createItem(canteen_id, item_name, decription, price, image_url, category, is_vegetarian) {
@@ -26,8 +25,13 @@ export async function deleteItem(item_id, canteen_id) {
 }
 
 export async function changeItemAvailability(item_id, canteen_id, is_available) {
-    const sql = "UPDATE items SET is_available = $1, updated_at = $2, updated_at = current_timestamp() WHERE item_id = $3 AND canteen_id = $4";
+    const sql = "UPDATE items SET is_available = $1, updated_at = current_timestamp() WHERE item_id = $2 AND canteen_id = $3";
     const result = await pool.query(sql, [is_available, item_id, canteen_id]);
     return result; 
 }
 
+export async function getMultipleItems(positions, values) {
+    const sql = `SELECT * FROM items WHERE item_id IN (${positions.join(", ")});`;
+    const result = await pool.query(sql, values);
+    return result.rows;
+}

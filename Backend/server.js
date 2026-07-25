@@ -6,6 +6,8 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js"
 import itemRoutes from "./routes/itemRoutes.js";
 import menuRoutes from "./routes/menuRoutes.js";
+import canteenRoutes from "./routes/canteenRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 import CookieParser from "cookie-parser";
 
 
@@ -24,6 +26,10 @@ server.use("/api", userRoutes);
 server.use("/api", itemRoutes);
 
 server.use("/api", menuRoutes);
+
+server.use("/api", canteenRoutes);
+
+server.use("/api", orderRoutes);
 
 server.use((err, req, res, next) => {
     console.error(err);

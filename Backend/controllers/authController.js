@@ -4,7 +4,7 @@ import {randomUUID, verify} from 'crypto';
 import {storeToken, findUser, deleteToken} from "../models/refreshTokenModel.js";
 import {findUserByPhoneNumber} from "../models/userModel.js";
 
-
+// used in the app
 export async function logIn(req, res) {
     
     const {phone_number, password} = req.body;
@@ -64,7 +64,7 @@ export async function logIn(req, res) {
 
 }
 
-
+// used in the app
 export async function logOut(req, res) {
     const cookie = req.cookies;
 
@@ -105,6 +105,7 @@ export async function logOut(req, res) {
     return res.sendStatus(204);
 }
 
+// used in the app
 export async function createNewToken(req, res) {
     const cookie = req.cookies;
     
