@@ -9,13 +9,13 @@ export async function createUser(name, email, password_hash, phone_number, role)
 export async function findUserByPhoneNumber(phone_number) {
     const sql = "SELECT * FROM users WHERE phone_number = $1";
     const result = await pool.query(sql, [phone_number]);
-    return result.rows;
+    return result;
 }
 
 export async function getUser(user_id) {
-    const sql = "SELECT (name, phone_number, email,profile_picture) FROM users WHERE user_id = $1";
+    const sql = "SELECT name, phone_number, email, profile_picture FROM users WHERE user_id = $1";
     const result = await pool.query(sql, [user_id]);
-    return result.rows;
+    return result;
 }
 
 export async function updateUser(user_id, fields, values) {
