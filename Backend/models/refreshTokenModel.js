@@ -7,7 +7,7 @@ export async function storeToken(token_id, token_hash, user_id, expires_at) {
 } 
 
 export async function findUser(token_id) {
-    const sql = "SELECT * FROM refresh_tokens WHERE token_id = $1";
+    const sql = "SELECT u.user_id, u.canteen_id, u.role, r.token_hash FROM refresh_tokens r JOIN users u ON u.user_id = r.user_id WHERE token_id = $1";
     const result = await pool.query(sql, [token_id]);    
     return result.rows;
 }
