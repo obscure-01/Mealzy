@@ -1,4 +1,3 @@
-import { verify } from "jsonwebtoken";
 import * as orderController from "../controllers/orderController.js";
 import verifyRoles from "../middleware/verifyRolesMiddlleware.js";
 import auth from "../middleware/authMiddleware.js";
@@ -16,3 +15,5 @@ router.put("/orders/canteen/cancel/:order_id", auth, verifyRoles("vendor", "admi
 router.put("/orders/canteen/accept/:order_id", auth, verifyRoles("vendor", "admin"), orderController.acceptOrder);
 router.put("/orders/canteen/preparing/:order_id", auth, verifyRoles("vendor", "admin"), orderController.orderPreparing);
 router.put("/orders/canteen/completed/:order_id", auth, verifyRoles("vendor", "admin"), orderController.orderCompleted);
+
+export default router;
