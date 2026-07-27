@@ -30,8 +30,8 @@ export async function deleteUser(user_id, fields, values) {
     return result;
 }
 
-export async function changeRoles(role, user_id) {
-    const sql = "UPDATE users SET role = $1 WHERE user_id = $2";
-    const result = await pool.query(sql, [role, user_id]);
+export async function changeRoles(role, canteen_id, user_id) {
+    const sql = "UPDATE users SET role = $1, canteen_id = $2 WHERE user_id = $3";
+    const result = await pool.query(sql, [role, canteen_id, user_id]);
     return result;
 }

@@ -135,13 +135,20 @@ export async function changeRoles(req, res, next) {
             return res.status(400).json({message:"Invalid user_id"});
         }
 
-        const {role} = req.body;
+        const role = req.body.role;
+        const canteen_id = Number(req.body.canteen_id);
+
+
 
         if (typeof role !== "string") {
             return res.status(400).json({message:"Invalid role"});
         }
 
-        const result = await userModel.changeRoles(role, user_id);
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+
+        const result = await userModel.changeRoles(role, canteen_id, user_id);
 
         if (result.rowCount === 0) {
             return res.status(404).json({message: "user not found"});
