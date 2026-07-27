@@ -32,89 +32,89 @@ export default function HomeScreen() {
         <GreetingSection name="Guest" />
       </Header>
 
-      <ScrollView contentContainerClassName="px-container-margin pt-2 pb-32 space-y-lg" showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerClassName="px-container-margin pt-2 pb-32 flex-col gap-lg" showsVerticalScrollIndicator={false}>
         {/* 3. Search */}
         <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
 
-      {/* 4. Active Order */}
-      {activeOrder &&          <ActiveOrderCard
-            token={activeOrder.token}
-            status={activeOrder.status}
-            readyInMinutes={activeOrder.readyInMinutes}
-          />
-      }
+        {/* 4. Active Order */}
+        {activeOrder && <ActiveOrderCard
+          token={activeOrder.token}
+          status={activeOrder.status}
+          readyInMinutes={activeOrder.readyInMinutes}
+        />
+        }
 
-      {/* 5. Canteen list */}
-      <View className="mt-4">
-        <View className="flex-row justify-between items-end mb-md">
-          <Text className="font-headline-md text-on-background">Choose Your Canteen</Text>
+        {/* 5. Canteen list */}
+        <View>
+          <View className="flex-row justify-between items-end mb-md">
+            <Text className="font-headline-md text-on-background">Choose Your Canteen</Text>
+          </View>
+          <View className="flex-col gap-md">
+            {canteens.map((item, index) => (
+              <CanteenCard
+                key={item.id}
+                image={item.image}
+                name={item.name}
+                openingHours={item.openHours}
+                isOpen={true}
+                variant={index % 2 === 0 ? 'primary' : 'secondary'}
+              />
+            ))}
+          </View>
         </View>
-        <View className="flex-col gap-md">
-          {canteens.map((item, index) => (
-            <CanteenCard
-              key={item.id}
-              image={item.image}
-              name={item.name}
-              openingHours={item.openHours}
-              isOpen={true}
-              variant={index % 2 === 0 ? 'primary' : 'secondary'}
+
+        {/* 6. Category chips */}
+        <View>
+          <Text className="font-headline-md text-on-background mb-md">Popular Categories</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 12, paddingRight: 24 }}
+          >
+            {categories.map((cat, index) => (
+              <CategoryChip key={cat.id} label={cat.name} selected={index === 0} />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* 7. Popular foods */}
+        <View>
+          <View className="flex-row justify-between items-center mb-md">
+            <Text className="font-headline-md text-on-background">Popular Items</Text>
+            <Text className="font-label-lg text-primary">View All</Text>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 16, paddingRight: 24 }}
+          >
+            {popularFoods.map((item, index) => (
+              <PopularFoodCard
+                key={item.id}
+                image={item.image}
+                name={item.name}
+                description={item.name}
+                isVeg={index % 2 === 0}
+                prepTime={0}
+                price={item.price}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* 8. Today's specials */}
+        <View className="mt-8">
+          <Text className="font-headline-md text-on-background mb-4">Today's Specials</Text>
+          {todaysSpecials.length > 0 && (
+            <TodaysSpecialCard
+              key={todaysSpecials[0].id}
+              image={todaysSpecials[0].image}
+              name={todaysSpecials[0].name}
+              price={todaysSpecials[0].price}
             />
-          ))}
+          )}
         </View>
-      </View>
-
-      {/* 6. Category chips */}
-      <View className="mt-6">
-        <Text className="font-headline-md text-on-background mb-4">Popular Categories</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 12, paddingRight: 24 }}
-        >
-          {categories.map((cat, index) => (
-            <CategoryChip key={cat.id} label={cat.name} selected={index === 0} />
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* 7. Popular foods */}
-      <View className="mt-8">
-        <View className="flex-row justify-between items-end mb-4">
-          <Text className="font-headline-md text-on-background">Popular Items</Text>
-          <Text className="font-label-lg text-primary">View All</Text>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 16, paddingRight: 24 }}
-        >
-          {popularFoods.map((item, index) => (
-            <PopularFoodCard
-              key={item.id}
-              image={item.image}
-              name={item.name}
-              description={item.name}
-              isVeg={index % 2 === 0}
-              prepTime={0}
-              price={item.price}
-            />
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* 8. Today's specials */}
-      <View className="mt-8">
-        <Text className="font-headline-md text-on-background mb-4">Today's Specials</Text>
-        {todaysSpecials.length > 0 && (
-          <TodaysSpecialCard
-            key={todaysSpecials[0].id}
-            image={todaysSpecials[0].image}
-            name={todaysSpecials[0].name}
-            price={todaysSpecials[0].price}
-          />
-        )}
-      </View>
-    </ScrollView>
-  </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

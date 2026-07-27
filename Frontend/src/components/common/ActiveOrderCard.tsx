@@ -48,8 +48,8 @@ export const ActiveOrderCard = React.memo((props: ActiveOrderCardProps) => {
       accessibilityLabel={label}
       accessible
     >
-      <View className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full" />
-      
+      <View className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+
       <View className="flex-row justify-between items-start mb-4">
         <View>
           <View className="bg-white/20 px-4 py-1.5 rounded-full mb-2 self-start">
@@ -57,7 +57,7 @@ export const ActiveOrderCard = React.memo((props: ActiveOrderCardProps) => {
           </View>
           <Text className="font-headline-md text-white">{statusTextMap[status] || status}</Text>
         </View>
-        <View className="bg-white/20 p-2 rounded-xl">
+        <View className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
           <MaterialIcons name="timer" size={24} color="white" />
         </View>
       </View>

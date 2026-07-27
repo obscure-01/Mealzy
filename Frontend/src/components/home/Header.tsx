@@ -27,7 +27,7 @@ export const Header = React.memo(({ avatarSource, children, className = '' }: He
         {children}
       </View>
       <View className="flex-row items-center gap-4 hidden md:flex">
-         <Text className="font-display-lg text-[32px] text-primary dark:text-primary-fixed-dim">Mealzy</Text>
+        <Text className="font-display-lg text-[32px] text-primary dark:text-primary-fixed-dim">Mealzy</Text>
       </View>
     </View>
   );

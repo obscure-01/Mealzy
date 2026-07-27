@@ -47,28 +47,27 @@ export const TodaysSpecialCard = React.memo(
     accessibilityLabel,
   }: TodaysSpecialCardProps) => {
     const label = accessibilityLabel ?? `${name}, today's special, price ${formatCurrency(price)}`;
-    const containerClasses = `relative rounded-3xl overflow-hidden shadow-md ${className}`;
+    const containerClasses = `relative bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0px_4px_20px_rgba(44,62,80,0.06)] border border-outline-variant/10 ${className}`;
 
     const content = (
-      <View className="h-56 w-full">
+      <View className="h-56 w-full relative">
         <Image source={image} className="w-full h-full object-cover" />
-        <View className="absolute inset-0 bg-black/40" />
-        
-        <View className="absolute bottom-0 left-0 right-0 p-5">
+
+        <View className="absolute inset-0 bg-black/40 flex-col justify-end p-5">
           <View className="flex-row justify-between items-end">
             <View className="flex-1 mr-4">
-              <View className="bg-error/90 px-3 py-1 rounded-full self-start mb-2">
-                <Text className="text-white font-label-md">{badgeText}</Text>
+              <View className="bg-tertiary px-3 py-1 rounded-full self-start mb-2 inline-block">
+                <Text className="text-white font-label-lg">{badgeText}</Text>
               </View>
-              <Text className="font-headline-sm text-white mb-1">{name}</Text>
+              <Text className="font-display-lg text-2xl text-white mb-1">{name}</Text>
               <Text className="font-body-md text-white/80" numberOfLines={1}>
                 Served with 2 types of chutney & sambar
               </Text>
             </View>
             <View className="items-end">
-              <Text className="font-title-lg text-white mb-2">{formatCurrency(price)}</Text>
-              <TouchableOpacity className="bg-primary px-4 py-2 rounded-xl shadow-sm" onPress={onPress}>
-                <Text className="text-white font-label-md">View Item</Text>
+              <Text className="font-headline-lg text-white block mb-2">{formatCurrency(price)}</Text>
+              <TouchableOpacity className="bg-primary px-5 py-2.5 rounded-2xl shadow-lg mt-2 active-scale" onPress={onPress}>
+                <Text className="text-white font-label-lg">View Item</Text>
               </TouchableOpacity>
             </View>
           </View>
