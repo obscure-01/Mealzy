@@ -1,3 +1,5 @@
+// add get all canteens
+
 import * as canteenModel from "../models/canteenModel.js";
 
 // only available to the admin
@@ -119,10 +121,7 @@ export async function deleteCanteen(req, res, next) {
             return res.status(400).json({message:"Invalid canteen_id"});
         }
         
-        const result = await canteenModel.deleteCanteen(canteen_id);
-
-        console.log(result.rowCount);
-        
+        const result = await canteenModel.deleteCanteen(canteen_id);        
         
         if (result.rowCount === 0) {
             return res.status(404).json({message:"Canteen not found"});
@@ -171,3 +170,18 @@ export async function openCanteen(req, res, next) {
         
 }
 
+export async function getAllCanteens(req, res, next) {
+    try {
+        
+        const result = await canteenModel.getAllCanteens();
+
+        if (result.length === 0) {
+            return res.status(404).json({message:"Canteens not found"});
+        }
+        
+        return res.status(200).json({canteen_data : result});
+    }
+    catch (err) {
+        next(err);
+    }
+}

@@ -30,3 +30,9 @@ export async function openCanteen(canteen_id, is_open) {
     const result = await pool.query(sql, [canteen_id, is_open]);
     return result;
 }
+
+export async function getAllCanteens() {
+    const sql = `SELECT * FROM canteens`;
+    const result = await pool.query(sql);
+    return result.rows;
+}
