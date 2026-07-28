@@ -1,6 +1,6 @@
 // src/navigation/AppNavigator.tsx
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -35,7 +35,16 @@ export function AppNavigator() {
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarShowLabel: true,
-          tabBarLabelStyle: { fontFamily: 'Outfit-Medium', fontSize: 12 },
+          tabBarLabel: ({ focused, color }) => {
+            return (
+              <View className="items-center">
+                <Text className={`font-label-lg mt-1 ${focused ? 'font-bold' : ''}`} style={{ color }}>
+                  {route.name}
+                </Text>
+                {focused ? <View className="w-1 h-1 rounded-full bg-primary mt-1" /> : <View className="w-1 h-1 mt-1" />}
+              </View>
+            );
+          },
           tabBarIcon: ({ color, focused }) => {
             let iconName: string = '';
             if (route.name === 'Home') {
@@ -46,27 +55,26 @@ export function AppNavigator() {
               iconName = 'person';
             }
             return (
-              <View className="items-center">
+              <View className="items-center mt-2">
                 <MaterialIcons name={iconName as any} size={24} color={color} />
-                {focused && <View className="w-1 h-1 rounded-full bg-primary mt-1 absolute -bottom-3" />}
               </View>
             );
           },
           tabBarActiveTintColor: '#006d37', // primary color
           tabBarInactiveTintColor: '#5d5f5f', // secondary
-          tabBarStyle: { 
+          tabBarStyle: {
             backgroundColor: '#ffffff', // bg-surface-container-lowest
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
             borderTopWidth: 0,
             shadowColor: '#2C3E50',
             shadowOffset: { width: 0, height: -4 },
-            shadowOpacity: 0.05,
+            shadowOpacity: 0.06,
             shadowRadius: 20,
             elevation: 10,
-            height: 65,
+            height: 70,
             paddingBottom: 10,
-            paddingTop: 10,
+            paddingTop: 5,
           },
         })}
       >
