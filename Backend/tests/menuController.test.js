@@ -202,7 +202,7 @@ describe("updateMenu", async () => {
         
         await updateMenu(req, res, next);
 
-        expect(menuModel.updateMenu).toHaveBeenCalledWith(1, ["($1, $2)", "($3, $4)", "($5, $6)"], [1, true, 2, false, 3, true]);
+        expect(menuModel.updateMenu).toHaveBeenCalledWith(1, ["($1::INT, $2::BOOLEAN)", "($3::INT, $4::BOOLEAN)", "($5::INT, $6::BOOLEAN)"], [1, true, 2, false, 3, true]);
         expect(menuModel.updateMenu).toHaveBeenCalledTimes(1);
 
         expect(res.status).toHaveBeenCalledWith(200);
@@ -232,7 +232,7 @@ describe("updateMenu", async () => {
 
         await updateMenu(req,res,next);
 
-        expect(menuModel.updateMenu).toHaveBeenCalledWith(1, ["($1, $2)", "($3, $4)", "($5, $6)"], [1, true, 2, false, 3, true]);
+        expect(menuModel.updateMenu).toHaveBeenCalledWith(1, ["($1::INT, $2::BOOLEAN)", "($3::INT, $4::BOOLEAN)", "($5::INT, $6::BOOLEAN)"], [1, true, 2, false, 3, true]);
         expect(menuModel.updateMenu).toHaveBeenCalledTimes(1);
 
         expect(res.status).toHaveBeenCalledWith(404);

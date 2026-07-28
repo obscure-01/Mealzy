@@ -1,4 +1,5 @@
 // test 0 and negetive numbers
+// addd way for admin to update
 
 import { json } from "express";
 import * as itemModel from "../models/itemModel.js";
@@ -47,13 +48,13 @@ export async function getItem(req, res, next) {
             return res.status(400).json({message:"item_id must be a number"});      
         }
         
-        const [item] = await itemModel.getItem(item_id);
+        const item = await itemModel.getItem(item_id);
         
-        if (!item) {
+        if (item.length === 0) {
             return res.status(404).json({message: "Item not found"});
         }
         
-        res.status(200).json({item_data : item});
+        res.status(200).json({item_data : item[0]});
     }
     catch (err) {
         next(err);
@@ -125,7 +126,7 @@ export async function updateItem(req, res, next) {
 
         const result = await itemModel.updateItem(item_id, canteen_id, fields, values);
 
-        if (result.rowsCount === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({message:"Matching item not find"});
         }
 
@@ -155,7 +156,7 @@ export async function deleteItem(req, res, next) {
 
         const result = await itemModel.deleteItem(item_id, canteen_id);
 
-        if (result.rowsCount === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({message:"item does not exist"});
         }
 
@@ -191,7 +192,7 @@ export async function changeAvailability(req, res, next) {
         
         const result = await itemModel.changeItemAvailability(item_id, canteen_id, is_available);
         
-        if (result.rowsCount === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({message:"item does not exist"});
         }
         

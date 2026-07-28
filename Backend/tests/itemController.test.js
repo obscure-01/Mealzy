@@ -404,7 +404,7 @@ describe("deleteItem", () => {
     })
 
     test("return 404 when item is not found", async () => {
-        itemModel.deleteItem.mockResolvedValue({rowsCount : 0});
+        itemModel.deleteItem.mockResolvedValue({rowCount : 0});
 
         await itemController.deleteItem(req, res, next);
 
@@ -510,7 +510,7 @@ describe("changeItemAvailability", () => {
 
 
     test("return 404 when item is not found", async () => {
-        itemModel.changeItemAvailability.mockResolvedValue({rowsCount : 0});
+        itemModel.changeItemAvailability.mockResolvedValue({rowCount : 0});
 
         await itemController.changeAvailability(req, res, next);
 

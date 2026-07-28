@@ -14,8 +14,8 @@ describe("createCanteen", () => {
             body : {
                 canteen_name : "fatso joint", 
                 canteen_location : "up your a to the left", 
-                opening_time : "5:00 A.M.", 
-                closing_time : "4:00 A.M."
+                opening_time : "5:00:00", 
+                closing_time : "4:00:00"
             }
         }
 
@@ -33,10 +33,7 @@ describe("createCanteen", () => {
         
         await createCanteen(req, res, next);
 
-        expect(canteenModel.createCanteen).toHaveBeenCalledWith("fatso joint","up your a to the left","5:00 A.M.","4:00 A.M.");
-
-        console.log(next.mock.calls);
-        
+        expect(canteenModel.createCanteen).toHaveBeenCalledWith("fatso joint","up your a to the left","5:00:00","4:00:00");        
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({message:"New canteen created"});
@@ -46,9 +43,7 @@ describe("createCanteen", () => {
 
     test.each([["canteen_name", undefined], ["canteen_location", undefined], ["opening_time", undefined], ["canteen_name", 12], ["closing_time", undefined]])("return 400 if %s is not string", async (field, value) => {
             req.body[field] = value;
-        
-            console.log(field);
-            
+                    
             await createCanteen(req, res, next);
     
             expect(canteenModel.createCanteen).not.toHaveBeenCalled();
@@ -66,7 +61,7 @@ describe("createCanteen", () => {
 
         await createCanteen(req, res, next);
 
-        expect(canteenModel.createCanteen).toHaveBeenCalledWith("fatso joint","up your a to the left","5:00 A.M.","4:00 A.M.");
+        expect(canteenModel.createCanteen).toHaveBeenCalledWith("fatso joint","up your a to the left","5:00:00","4:00:00");
         expect(canteenModel.createCanteen).toHaveBeenCalledTimes(1);
 
         expect(res.status).not.toHaveBeenCalled();
@@ -102,7 +97,7 @@ describe("Canteen Controller", () => {
 
         test("returns 400 for invalid canteen_id", async () => {
 
-            req.canteen_id = "abc";
+            req.canteen_id = undefined;
 
             await updateCanteen(req, res, next);
 
@@ -134,10 +129,10 @@ describe("Canteen Controller", () => {
             expect(canteenModel.updateCanteen).toHaveBeenCalledWith(
                 2,
                 [
-                    "canteen_name = 1",
-                    "canteen_location = 2",
-                    "opening_time = 3",
-                    "closing_time = 4"
+                    "canteen_name = $1",
+                    "canteen_location = $2",
+                    "opening_time = $3",
+                    "closing_time = $4"
                 ],
                 [
                     "Central Cafe",
@@ -266,7 +261,7 @@ describe("Canteen Controller", () => {
             req.canteen_id = 5;
 
             canteenModel.deleteCanteen.mockResolvedValue({
-                rowsCount: 0
+                rowCount: 0
             });
 
             await  deleteCanteen(req, res, next);
@@ -344,7 +339,7 @@ describe("Canteen Controller", () => {
             };
 
             canteenModel.openCanteen.mockResolvedValue({
-                rowsCount: 0
+                rowCount: 0
             });
 
             await  openCanteen(req, res, next);

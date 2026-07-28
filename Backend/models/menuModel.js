@@ -22,7 +22,7 @@ export async function updateMenu(canteen_id, positions, values) {
             VALUES
                 ${positions.join(", ")}
         ) AS v(item_id, is_available)
-        WHERE i.item_id = v.item_id AND i.canteen_id = $${positions.length + 1};`;
+        WHERE i.item_id = v.item_id AND i.canteen_id = $${positions.length * 2  + 1};`;
 
     const result = await pool.query(sql, [...values, canteen_id]);
 
