@@ -23,7 +23,7 @@ describe("orderService createOrder", () => {
             {item_id:3, quantity : 3, price : 60}
         ];
         pool = {
-            client : vi.fn().mockResolvedValue({
+            connect : vi.fn().mockResolvedValue({
                 query,
                 release
             })
@@ -155,8 +155,8 @@ describe("getCanteenOrderDetails", () => {
     })
 
     test("return object when successfully retreiving values", async () => {
-        orderModel.getCanteenOrder.mockResolvedValue({rowCount : 1, rows : [{user_id : 1}]});
-        userModel.getUser.mockResolvedValue({});
+        orderModel.getCanteenOrder.mockResolvedValue([{user_id : 1}]);
+        userModel.getUser.mockResolvedValue({rowCount : 1, rows : []});
                     
         await getCanteenOrderDetails(canteen_id, order_id);
 
@@ -168,7 +168,7 @@ describe("getCanteenOrderDetails", () => {
     })
 
     test("return empty object when successfully retreiving values", async () => {
-        orderModel.getCanteenOrder.mockResolvedValue({rowCount : 0 });
+        orderModel.getCanteenOrder.mockResolvedValue([]);
 
         await getCanteenOrderDetails(canteen_id, order_id);
 

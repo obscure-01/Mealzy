@@ -13,11 +13,14 @@ export async function logIn(req, res) {
         return res.status(400).json({message: "Required filed missing"});
     }
 
-    const [user_detail] = await findUserByPhoneNumber(phone_number);    
+    const result = await findUserByPhoneNumber(phone_number);    
 
-    if (!user_detail) {
+    if (result.rowCount === 0) {
         return res.status(404).json({message:"User not found"});
     }
+
+    const user_detail = result.rows[0];
+
     // implement password validation here
     const match = await compare(password, user_detail.password_hash);
 
@@ -38,7 +41,7 @@ export async function logIn(req, res) {
             const UUID = randomUUID();
 
             const refreshToken = jwt.sign({
-                    user_id: user_detail,
+                    user_id: user_detail.user_id,
                     jti: UUID
                 },
                 process.env.REFRESH_TOKEN_SECRET,
@@ -125,10 +128,7 @@ export async function createNewToken(req, res) {
         return res.status(403).json({message:err.message});
     }
 
-    const [user] = await findUser(payload.jti);
-
-    console.log(user);
-    
+    const [user] = await findUser(payload.jti);    
 
     if (!user) {
         return res.status(403).json({message: "no user"});

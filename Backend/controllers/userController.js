@@ -16,12 +16,9 @@ export async function createUser(req, res, next) {
         
         // add more input validation later in the form of middlewares
         
-        const [user] = await userModel.findUserByPhoneNumber(phone_number);
+        const user = await userModel.findUserByPhoneNumber(phone_number);        
         
-        console.log(user);
-        
-        
-        if (user) {
+        if (user.rowCount !== 0) {
             return res.status(409).json({message:"User already exist"});
         }
         
@@ -55,15 +52,15 @@ export async function updateUser(req, res, next) {
 
 
         if (typeof name === "string") {
-            fields.push(`name = $${values+1}`);
+            fields.push(`name = $${values.length+1}`);
             values.push(name);
         }
         if (typeof email === "string") {
-            fields.push(`email = $${values+1}`);
+            fields.push(`email = $${values.length+1}`);
             values.push(email);
         }
         if (typeof phone_number === "string") {
-            fields.push(`phone_number = $${values+1}`);
+            fields.push(`phone_number = $${values.length+1}`);
             values.push(phone_number);
         }
         if (typeof profile_picture === "string") {
@@ -88,19 +85,19 @@ export async function updateUser(req, res, next) {
 
 export async function getUser(req, res, next) {
     try {
-        const user_id = req.params.user_id;
+        const user_id = Number(req.params.user_id);
         
         if (!Number.isInteger(user_id)) {
             return res.status(400).json({message:"Invalid user_id"});
         }
 
-        const [result] = await userModel.getUser(user_id);
+        const result = await userModel.getUser(user_id);
 
-        if (result.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({message: "user not found"});
-        }
+        }        
 
-        return res.status(200).json({user_info : result});
+        return res.status(200).json({user_info : result.rows[0]});
     }
     catch (err) {
         next(err);
@@ -110,7 +107,7 @@ export async function getUser(req, res, next) {
 
 export async function deleteUser(req, res, next) {
     try {
-        const user_id = req.user_id;
+        const user_id = Number(req.user_id);
         
         if (!Number.isInteger(user_id)) {
             return res.status(400).json({message:"Invalid user_id"});
@@ -122,7 +119,7 @@ export async function deleteUser(req, res, next) {
             return res.status(404).json({message: "user not found"});
         }
 
-        return res.status(200).json({user_info : result});
+        return res.status(200).json({message : "user deleted"});
     }
     catch (err) {
         next(err);
@@ -132,25 +129,32 @@ export async function deleteUser(req, res, next) {
 
 export async function changeRoles(req, res, next) {
     try {
-        const user_id = req.params.user_id;
+        const user_id = Number(req.params.user_id);
         
         if (!Number.isInteger(user_id)) {
             return res.status(400).json({message:"Invalid user_id"});
         }
 
-        const {role} = req.body;
+        const role = req.body.role;
+        const canteen_id = Number(req.body.canteen_id);
+
+
 
         if (typeof role !== "string") {
             return res.status(400).json({message:"Invalid role"});
         }
 
-        const result = await userModel.changeRoles(role, user_id);
+        if (!Number.isInteger(canteen_id)) {
+            return res.status(400).json({message:"Invalid canteen_id"});
+        }
+
+        const result = await userModel.changeRoles(role, canteen_id, user_id);
 
         if (result.rowCount === 0) {
             return res.status(404).json({message: "user not found"});
         }
 
-        return res.status(200).json({user_info : result});
+        return res.status(200).json({message: "user role updated"});
     }
     catch (err) {
         next(err);

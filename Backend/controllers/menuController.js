@@ -1,3 +1,5 @@
+// add a way for admin to access complete menu
+
 import * as menuModel from "../models/menuModel.js";
 
 // used in the app
@@ -62,7 +64,7 @@ export async function updateMenu(req, res, next) {
         let values = [];
 
         for (let i = 0; i < items.length; i++) {
-            position.push(`($${i*2 + 1}, $${i*2 + 2})`);
+            position.push(`($${i*2 + 1}::INT, $${i*2 + 2}::BOOLEAN)`);
 
             const item_id = Number(items[i][0]);
             const is_available = items[i][1];

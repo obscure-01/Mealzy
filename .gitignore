@@ -54,3 +54,6 @@ walkthrough 1
 
 #LOCAL TEST FILE
 jstestfile.js
+
+#schema
+*.sql
