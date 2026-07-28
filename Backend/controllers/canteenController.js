@@ -30,9 +30,14 @@ export async function createCanteen(req, res, next) {
 export async function updateCanteen(req, res, next) {
     try {
 
-        const canteen_id = Number(req.canteen_id);
+        let canteen_id = Number(req.canteen_id);
         
+        if (canteen_id === 0 && req.role === "admin") {
+            canteen_id = Number(req.params.canteen_id);
+        }
+
         if (!Number.isInteger(canteen_id)) {
+            
             return res.status(400).json({message:"Invalid canteen_id"});
         }
         
@@ -42,22 +47,22 @@ export async function updateCanteen(req, res, next) {
         let values = [];
         
         if (typeof canteen_name === "string" ) {
-            fields.push(`canteen_name = ${fields.length+1}`);
+            fields.push(`canteen_name = $${fields.length+1}`);
             values.push(canteen_name);
         }
         
         if (typeof canteen_location === "string"  ) {
-            fields.push(`canteen_location = ${fields.length+1}`);
+            fields.push(`canteen_location = $${fields.length+1}`);
             values.push(canteen_location);
         }
         
         if (typeof opening_time === "string"  ) {
-            fields.push(`opening_time = ${fields.length+1}`);
+            fields.push(`opening_time = $${fields.length+1}`);
             values.push(opening_time);
         }
         
         if (typeof closing_time === "string"  ) {
-            fields.push(`closing_time = ${fields.length+1}`);
+            fields.push(`closing_time = $${fields.length+1}`);
             values.push(closing_time);
         }
         
@@ -86,13 +91,13 @@ export async function getCanteen(req, res, next) {
             return res.status(400).json({message:"Invalid canteen_id"});
         }
         
-        const [result] = await canteenModel.getCanteen(canteen_id);
-        
-        if (!result) {
+        const result = await canteenModel.getCanteen(canteen_id);
+
+        if (result.length === 0) {
             return res.status(404).json({message:"Canteen not found"});
         }
         
-        return res.status(200).json({canteen_data : result});
+        return res.status(200).json({canteen_data : result[0]});
     }
     catch (err) {
         next(err);
@@ -103,15 +108,23 @@ export async function getCanteen(req, res, next) {
 export async function deleteCanteen(req, res, next) {
     try {
 
-        const canteen_id = Number(req.canteen_id);
+        let canteen_id = Number(req.canteen_id);
         
+        if (canteen_id === 0 && req.role === "admin") {
+            canteen_id = Number(req.params.canteen_id);
+        }
+
         if (!Number.isInteger(canteen_id)) {
+            
             return res.status(400).json({message:"Invalid canteen_id"});
         }
         
         const result = await canteenModel.deleteCanteen(canteen_id);
+
+        console.log(result.rowCount);
         
-        if (result.rowsCount === 0) {
+        
+        if (result.rowCount === 0) {
             return res.status(404).json({message:"Canteen not found"});
         }
         
@@ -127,9 +140,14 @@ export async function deleteCanteen(req, res, next) {
 export async function openCanteen(req, res, next) {
     try {
         
-        const canteen_id = Number(req.canteen_id);
+        let canteen_id = Number(req.canteen_id);
         
+        if (canteen_id === 0 && req.role === "admin") {
+            canteen_id = Number(req.params.canteen_id);
+        }
+
         if (!Number.isInteger(canteen_id)) {
+            
             return res.status(400).json({message:"Invalid canteen_id"});
         }
         
@@ -141,7 +159,7 @@ export async function openCanteen(req, res, next) {
         
         const result = await canteenModel.openCanteen(canteen_id, is_open);
         
-        if (result.rowsCount === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({message:"Canteen not found"});
         }
         
