@@ -274,7 +274,7 @@ export async function orderPreparing(req, res, next) {
             return res.status(403).json({message:"Could not start preparing order"});
         }
         
-        return res.status(200).json({message:"Order is being preparing now"});
+        return res.status(200).json({message:"Order is being prepared now"});
     }
     catch (err) {
         next(err);

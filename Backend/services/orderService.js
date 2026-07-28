@@ -4,7 +4,7 @@ import * as orderModel from "../models/orderModel.js";
 
 export async function createOrder(order_values, order_items) {
     
-    const client = await pool.client();
+    const client = await pool.connect();
 
     try {
         await client.query("BEGIN");
@@ -56,20 +56,27 @@ export async function getCanteenOrderDetails(canteen_id, order_id) {
     
     const order_data = await orderModel.getCanteenOrder(canteen_id, order_id);
 
-    if (order_data.rowCount === 0) {
+    if (order_data.length === 0) {
         return {notFound:true};
     }    
 
-    const user_id = order_data.rows[0].user_id;
+    console.log(order_data[0].user_id);
+    
+
+    const user_id = order_data[0].user_id;
 
     const user_info = await userModel.getUser(user_id);
+
+    if (user_info.rowCount === 0) {
+        return {notFound:true};
+    }
 
     // return rows of data as a list
     const order_item_data = await orderModel.getOrderItems(order_id);
 
     const details = {
-            order_info : order_data.rows[0],
-            user_info : user_info,
+            order_info : order_data[0],
+            user_info : user_info.rows[0],
             items : order_item_data
     }
 
@@ -80,6 +87,9 @@ export async function getCanteenOrderDetails(canteen_id, order_id) {
 export async function getUserOrderHistory(user_id) {
     
     const orders = await orderModel.getAllUserOrders(user_id);
+
+    console.log(orders.rows);
+    
 
     if (orders.rowCount === 0) {
         return [];
@@ -94,6 +104,8 @@ export async function getUserOrderHistory(user_id) {
     }
 
     const order_items = await orderModel.getMultipleOrdersItems(positions, values);
+
+    console.log(order_items);
 
     let order_map = new Map();
 
