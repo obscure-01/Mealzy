@@ -53,7 +53,8 @@ walkthrough 1
 
 
 #LOCAL TEST FILE
-jstestfile.js
+dump/
+temp/
 
 #schema
 *.sql
