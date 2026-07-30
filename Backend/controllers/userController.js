@@ -99,7 +99,7 @@ export async function updateUser(req, res, next) {
             const profile_picture_id = result.rows[0].profile_picture_id;
             
             if (profile_picture_id) {
-                deleteImage(profile_picture_id);
+                await deleteImage(profile_picture_id);
             }
 
             const uploadResult = await uploadImage(profile_picture);
