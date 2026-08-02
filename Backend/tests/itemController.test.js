@@ -4,8 +4,11 @@
 import { describe, beforeEach, test, expect, vi } from "vitest";
 import * as itemController from "../controllers/itemController.js";
 import * as itemModel from "../models/itemModel.js";
+import * as cloudinaryService from "../services/cloudinaryService.js";
 
 vi.mock("../models/itemModel.js");
+vi.mock("../services/cloudinaryService.js")
+vi.mock("fs")
 
 describe("createItem", () => {
     let req;
@@ -18,10 +21,12 @@ describe("createItem", () => {
             body: {
                 item_name: "Burger",
                 description: "Delicious veg burger",
-                price: 40,
-                image: "burger.jpg",
+                price: "40",
                 category: "snack",
-                is_vegetarian: true
+                is_vegetarian: "true"
+            },
+            file : {
+                path : "burger.jpg"
             }
         };
 
@@ -37,6 +42,7 @@ describe("createItem", () => {
 
     test("should create a new items", async () => {
         itemModel.createItem.mockResolvedValue({});
+        cloudinaryService.uploadImage.mockResolvedValue({url : "burger_url", public_id : "image_id"})
 
         await itemController.createItem(req, res, next);
 
@@ -44,8 +50,9 @@ describe("createItem", () => {
             2,
             "Burger",
             "Delicious veg burger",
-            40,
-            "burger.jpg",
+            "40",
+            "burger_url",
+            "image_id",
             "snack",
             true
         );
@@ -78,7 +85,6 @@ describe("createItem", () => {
         "item_name",
         "description",
         "price",
-        "image",
         "category",
         "is_vegetarian"
     ])("returns 400 if %s is missing", async (field) => {
@@ -96,8 +102,6 @@ describe("createItem", () => {
     test.each([
         ["item_name", 12, "string"],
         ["description", 20, "string"],
-        ["price", "10", "number"],
-        ["image", 12, "string"],
         ["category", 23, "string"],
         ["is_vegetarian", "b", "boolean"]
     ])("returns 400 if %s is not %s", async (feild, value) => {
@@ -230,10 +234,13 @@ describe("updateItem", () => {
             body: {
                 item_name: "Big Burger",
                 description: "Big Juicy Burger",
-                price: 120,
-                image: "Big Burger.jpg",
+                price: "120",
                 category: "snack",
-                is_vegetarian: false
+                is_vegetarian: "false",
+                is_available: "true"
+            },
+            file : {
+                path : "burger.jpg"
             }
         };
 
@@ -249,8 +256,11 @@ describe("updateItem", () => {
 
     test("update all fields", async () => {
         itemModel.updateItem.mockResolvedValue({ rowsCount: 1 });
+        itemModel.getItem.mockResolvedValue([{item_id:2, image_id : 2}])
+        cloudinaryService.uploadImage.mockResolvedValue({url : "burger_url", public_id : "image_id"});
 
-        await itemController.updateItem(req, res, next);
+
+        await itemController.updateItem(req, res, next);        
 
         expect(itemModel.updateItem).toHaveBeenCalledWith(1, 1,
             [
@@ -259,15 +269,19 @@ describe("updateItem", () => {
                 "price = $3",
                 "category = $4",
                 "is_vegetarian = $5",
-                "image_url = $6"
+                "is_available = $6",
+                "image_url = $7",
+                "image_id = $8"
             ],
             [
                 'Big Burger',
                 'Big Juicy Burger',
-                120,
+                "120",
                 'snack',
                 false,
-                'Big Burger.jpg'
+                true,
+                'burger_url',
+                "image_id"
             ]
         );
 
@@ -308,7 +322,6 @@ describe("updateItem", () => {
         "item_name", 
         "description", 
         "price", 
-        "image", 
         "category", 
         "is_vegetarian", 
         "is_available"
@@ -340,9 +353,10 @@ describe("updateItem", () => {
 
     test("return 400 if no fields passed", async () => {
         req.body = {};
+        req.file = {}
 
         await itemController.updateItem(req, res, next);
-
+        
         expect(itemModel.updateItem).not.toHaveBeenCalled();
 
         expect(res.status).toHaveBeenCalledWith(400);

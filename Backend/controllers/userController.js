@@ -1,6 +1,9 @@
 import * as userModel from "../models/userModel.js";
 import {hash} from "bcrypt";
+import { uploadImage, deleteImage } from "../services/cloudinaryService.js";
 import jwt from "jsonwebtoken";
+import fs from "fs";
+
 
 // do not have a role input in the form
 // used in the app
@@ -8,12 +11,14 @@ export async function createUser(req, res, next) {
     try {
 
         // deal with profile picture later, add canteen id
-        const {name, email, password, phone_number, role} = req.body;
+        const {name, email, password, phone_number} = req.body;
         
-        if (!name || !email || !password || !phone_number || !role) {
+        if (!name || !email || !password || !phone_number) {
             return res.status(400).json({message: "Required filed missing"});
         }
-        
+
+        const profile_picture = req.file?.path;
+
         // add more input validation later in the form of middlewares
         
         const user = await userModel.findUserByPhoneNumber(phone_number);        
@@ -21,16 +26,34 @@ export async function createUser(req, res, next) {
         if (user.rowCount !== 0) {
             return res.status(409).json({message:"User already exist"});
         }
-        
+
         const password_hash = await hash(password, Number(process.env.NUMBER_OF_SALT_ROUNDS));
-        // process user profile picture here
-        const result = await userModel.createUser(name, email, password_hash, phone_number, role);
+
+        let uploadResult = null;
+        if (profile_picture) {
+            uploadResult = await uploadImage(profile_picture);
+        }        
+
+        console.log(uploadResult);
+        console.log(uploadResult?.url, uploadResult?.public_id);
+        
+        
+        const result = await userModel.createUser(name, email, password_hash, phone_number, uploadResult?.url, uploadResult?.public_id);
         
         return res.status(201).json({message: "Created new user"});
     }
-    catch (err) {
-        // delete saved profile picture if error occured
+    catch (err) {        
         next(err);
+    }
+    finally {
+        if (req?.file.path) {
+            try {
+                fs.unlinkSync(req.file.path);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -45,7 +68,7 @@ export async function updateUser(req, res, next) {
             return res.status(400).json({message:"Invalid user_id"});
         }
 
-        const {name, email, phone_number, profile_picture} = req.body;
+        const {name, email, phone_number} = req.body;
 
         let fields = [];
         let values = [];
@@ -63,11 +86,27 @@ export async function updateUser(req, res, next) {
             fields.push(`phone_number = $${values.length+1}`);
             values.push(phone_number);
         }
-        if (typeof profile_picture === "string") {
-            // implement image saving 
-            const profile_picture_url = profile_picture;
+
+        const profile_picture = req.file?.path;
+
+        if (profile_picture) {
+
+            const result = await userModel.getUser(user_id);
+
+            if (result.rowCount === 0) {
+                return res.status(404).json({message: "user not found"});
+            } 
+            const profile_picture_id = result.rows[0].profile_picture_id;
+            
+            if (profile_picture_id) {
+                await deleteImage(profile_picture_id);
+            }
+
+            const uploadResult = await uploadImage(profile_picture);
             fields.push(`profile_picture = $${values.length+1}`);
-            values.push(profile_picture_url);
+            values.push(uploadResult.url);
+            fields.push(`profile_picture_id = $${values.length+1}`);
+            values.push(uploadResult.public_id);
         }
         
         const result = await userModel.updateUser(user_id, fields, values);
@@ -80,6 +119,16 @@ export async function updateUser(req, res, next) {
     }
     catch (err) {
         next(err);
+    }
+    finally {
+        if (req?.file.path) {
+            try {
+                fs.unlinkSync(req.file.path);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -102,6 +151,7 @@ export async function getUser(req, res, next) {
     catch (err) {
         next(err);
     }
+    
 }
 
 
