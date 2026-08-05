@@ -9,12 +9,14 @@ import menuRoutes from "./routes/menuRoutes.js";
 import canteenRoutes from "./routes/canteenRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import CookieParser from "cookie-parser";
+import cors from "cors";
 
 
-const server_port = process.env.server_port;
+const server_port = process.env.PORT || 3000;
 
 const server = express();
 
+server.use(cors({ origin: true, credentials: true }));
 server.use(express.json());
 
 server.use(CookieParser());

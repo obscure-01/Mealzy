@@ -3,7 +3,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/auth/logIn", authController.logIn);
+router.post("/auth/logIn", authController.logIn);
 router.get("/auth/accessToken", authController.createNewToken);
 router.get("/auth/logOut", authController.logOut);
 
