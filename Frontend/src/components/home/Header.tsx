@@ -6,6 +6,7 @@ import { PropsWithChildren } from 'react';
 export type HeaderProps = PropsWithChildren<{
   avatarSource: any; // require image asset
   className?: string;
+  rightAction?: React.ReactNode;
 }>;
 
 /**
@@ -13,7 +14,7 @@ export type HeaderProps = PropsWithChildren<{
  * Renders the user's avatar on the left and any optional children (e.g., logo) on the right.
  * Uses NativeWind Tailwind classes to match the Stitch design.
  */
-export const Header = React.memo(({ avatarSource, children, className = '' }: HeaderProps) => {
+export const Header = React.memo(({ avatarSource, children, className = '', rightAction }: HeaderProps) => {
   return (
     <View
       className={`bg-background flex-row justify-between items-center px-container-margin py-md w-full z-40 ${className}`}
@@ -26,9 +27,16 @@ export const Header = React.memo(({ avatarSource, children, className = '' }: He
         </View>
         {children}
       </View>
-      <View className="flex-row items-center gap-4 hidden md:flex">
-        <Text className="font-display-lg text-[32px] text-primary dark:text-primary-fixed-dim">Mealzy</Text>
-      </View>
+      {rightAction && (
+        <View className="flex-row items-center">
+          {rightAction}
+        </View>
+      )}
+      {!rightAction && (
+        <View className="flex-row items-center gap-4 hidden md:flex">
+          <Text className="font-display-lg text-[32px] text-primary dark:text-primary-fixed-dim">Mealzy</Text>
+        </View>
+      )}
     </View>
   );
 });

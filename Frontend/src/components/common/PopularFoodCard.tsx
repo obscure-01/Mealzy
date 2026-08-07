@@ -23,6 +23,8 @@ export interface PopularFoodCardProps {
   price: number;
   /** Handler when the Add button is pressed */
   onAdd?: (event: GestureResponderEvent) => void;
+  /** Handler when the card is pressed */
+  onPress?: (event: GestureResponderEvent) => void;
   /** Additional Tailwind classes */
   className?: string;
   /** Accessibility label override */
@@ -41,6 +43,7 @@ export const PopularFoodCard = React.memo(({
   prepTime,
   price,
   onAdd,
+  onPress,
   className = '',
   accessibilityLabel,
 }: PopularFoodCardProps) => {
@@ -51,8 +54,12 @@ export const PopularFoodCard = React.memo(({
     price
   )}`;
 
+  const Container = onPress ? TouchableOpacity : View;
+  const containerProps = onPress ? { onPress } : {};
+
   return (
-    <View
+    <Container
+      {...containerProps}
       accessibilityLabel={label}
       accessibilityRole="imagebutton"
       className={`min-w-[160px] bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0px_4px_20px_rgba(44,62,80,0.06)] border border-outline-variant/10 flex-col ${className}`}
@@ -80,7 +87,7 @@ export const PopularFoodCard = React.memo(({
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </Container>
   );
 });
 
