@@ -16,6 +16,9 @@ describe("createCanteen", () => {
                 canteen_location : "up your a to the left", 
                 opening_time : "5:00:00", 
                 closing_time : "4:00:00"
+            },
+            file : {
+                path : "image.jpg"
             }
         }
 

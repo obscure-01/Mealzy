@@ -1,8 +1,8 @@
 import pool from "../config/db.js";
 
-export async function createCanteen(canteen_name, canteen_location, opening_time, closing_time) {
-    const sql = "INSERT INTO canteens (canteen_name, canteen_location, opening_time, closing_time) VALUES ($1,$2,$3, $4)";
-    const result = await pool.query(sql, [canteen_name, canteen_location, opening_time, closing_time]);
+export async function createCanteen(canteen_name, canteen_location, opening_time, closing_time, image_url, image_id) {
+    const sql = "INSERT INTO canteens (canteen_name, canteen_location, opening_time, closing_time, image_url, image_id) VALUES ($1,$2,$3, $4, $5, $6)";
+    const result = await pool.query(sql, [canteen_name, canteen_location, opening_time, closing_time, image_url, image_id]);
     return result;
 }
 

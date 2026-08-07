@@ -1,6 +1,7 @@
 // add get all canteens
 
 import * as canteenModel from "../models/canteenModel.js";
+import { uploadImage, deleteImage } from "../services/cloudinaryService.js";
 
 // only available to the admin
 // not used in the app
@@ -17,13 +18,31 @@ export async function createCanteen(req, res, next) {
                     
                     return res.status(400).json({message:"Invalid data"});
             }
+
+            const image = req.file?.path;        
+
+            let uploadResult = null;
+
+            if (image) {
+                uploadResult = await uploadImage(image);
+            }  
             
-            await canteenModel.createCanteen(canteen_name, canteen_location, opening_time, closing_time);
+            await canteenModel.createCanteen(canteen_name, canteen_location, opening_time, closing_time, uploadResult.url, uploadResult.public_id);
             
             return res.status(200).json({message:"New canteen created"})
         }
     catch (err) {
         next(err)
+    }
+    finally {
+        if (req.file?.path) {
+            try {
+                fs.unlinkSync(req.file.path);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -45,6 +64,8 @@ export async function updateCanteen(req, res, next) {
         
         const {canteen_name, canteen_location, opening_time, closing_time} = req.body;
         
+        const image = req.file?.path;
+
         let fields = [];
         let values = [];
         
@@ -66,6 +87,26 @@ export async function updateCanteen(req, res, next) {
         if (typeof closing_time === "string"  ) {
             fields.push(`closing_time = $${fields.length+1}`);
             values.push(closing_time);
+        }
+
+        if (image) {
+            const itemRows = await canteenModel.getCanteen(canteen_id);
+
+            if (itemRows.length === 0) {
+                return res.status(404).json({message: "canteen not found"});
+            }
+
+            const image_id = itemRows[0].image_id;
+            if (image_id) {
+                await deleteImage(image_id);
+            }
+            
+            const uploadResult = await uploadImage(image);
+            
+            fields.push(`image_url = $${fields.length +  1}`);
+            values.push(uploadResult?.url);
+            fields.push(`image_id = $${fields.length +  1}`);
+            values.push(uploadResult?.public_id);
         }
         
         const result = await canteenModel.updateCanteen(canteen_id, fields, values);
