@@ -13,11 +13,32 @@ import { MaterialIcons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 
+import CanteenMenuScreen from '@/screens/Home/CanteenMenuScreen';
+import ItemDetailsScreen from '@/screens/Home/ItemDetailsScreen';
+import CartScreen from '@/screens/Home/CartScreen';
+import OrderHistoryScreen from '@/screens/Orders/OrderHistoryScreen';
+import OrderDetailsScreen from '@/screens/Orders/OrderDetailsScreen';
+import { OrdersStackParamList } from './types';
+
+const OrdersStack = createNativeStackNavigator<OrdersStackParamList>();
+
 function HomeStackNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      <HomeStack.Screen name="CanteenMenuScreen" component={CanteenMenuScreen} />
+      <HomeStack.Screen name="ItemDetailsScreen" component={ItemDetailsScreen} />
+      <HomeStack.Screen name="CartScreen" component={CartScreen} />
     </HomeStack.Navigator>
+  );
+}
+
+function OrdersStackNavigator() {
+  return (
+    <OrdersStack.Navigator screenOptions={{ headerShown: false }}>
+      <OrdersStack.Screen name="OrderHistoryScreen" component={OrderHistoryScreen} />
+      <OrdersStack.Screen name="OrderDetailsScreen" component={OrderDetailsScreen} />
+    </OrdersStack.Navigator>
   );
 }
 
@@ -100,7 +121,7 @@ export function AppNavigator() {
           })}
         >
           <Tab.Screen name="Home" component={HomeStackNavigator} />
-          <Tab.Screen name="Orders" component={DummyScreen} />
+          <Tab.Screen name="Orders" component={OrdersStackNavigator} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
       ) : (
