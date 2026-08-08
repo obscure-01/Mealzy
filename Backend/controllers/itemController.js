@@ -85,6 +85,26 @@ export async function getItem(req, res, next) {
     }
 }
 
+export const findItems = async (req, res, next) => {
+    try {
+        const { search } = req.query;
+
+        if (search.length === 0) {
+            return res.status(400).json({message : "No search query provided"});
+        }
+
+        const keyword = `%${search}%`;
+
+        const result = await itemModel.findItems(keyword);
+
+        return res.status(200).json({items : result});
+
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
 // used in the app
 export async function updateItem(req, res, next) {
     try {
