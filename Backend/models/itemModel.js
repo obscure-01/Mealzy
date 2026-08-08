@@ -12,6 +12,12 @@ export async function getItem(item_id) {
     return result.rows;
 }
 
+export async function findItems(keyword) {
+    const sql = `SELECT * FROM items WHERE LOWER(item_name) LIKE $1 OR LOWER(description) LIKE $1`;
+    const result = await pool.query(sql, [keyword]);
+    return result.rows;
+}
+
 export async function updateItem(item_id, canteen_id, fields, values) {
     const sql = `UPDATE items SET ${fields.join(", ")}, updated_at = current_timestamp WHERE item_id = $${fields.length + 1} AND canteen_id = $${fields.length + 2}`;
     const result = await pool.query(sql, [...values, item_id, canteen_id]);
