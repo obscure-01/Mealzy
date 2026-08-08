@@ -33,8 +33,8 @@ export const CanteenCard = React.memo(({
   accessibilityLabel,
   variant = 'primary',
 }: CanteenCardProps) => {
-  const Container = isOpen && onPress ? TouchableOpacity : View;
-  const containerProps = isOpen && onPress ? { onPress, accessibilityRole: 'button' as const } : {};
+  const Container = onPress ? TouchableOpacity : View;
+  const containerProps = onPress ? { onPress, accessibilityRole: 'button' as const } : {};
 
   const buttonClass = variant === 'primary'
     ? 'bg-primary-container'
@@ -54,9 +54,18 @@ export const CanteenCard = React.memo(({
     >
       <View className="relative h-40 w-full">
         <Image source={image} className="w-full h-full object-cover" />
-        <View className="absolute top-4 left-4 bg-white/90 px-3 py-1.5 rounded-full flex-row items-center gap-1 shadow-sm">
-          <MaterialIcons name="timer" size={16} color="#98472a" />
-          <Text className="font-caption text-on-surface">{waitingTime} min</Text>
+        <View className="absolute top-4 left-4 flex-row gap-2">
+          {/* Waiting time badge */}
+          <View className="bg-white/90 px-3 py-1.5 rounded-full flex-row items-center gap-1 shadow-sm">
+            <MaterialIcons name="timer" size={16} color="#98472a" />
+            <Text className="font-caption text-on-surface">{waitingTime} min</Text>
+          </View>
+          {/* Status badge */}
+          <View className={`px-3 py-1.5 rounded-full flex-row items-center justify-center shadow-sm ${isOpen ? 'bg-success/90' : 'bg-error/90'}`}>
+            <Text className={`font-label-md ${isOpen ? 'text-on-success' : 'text-on-error'}`}>
+              {isOpen ? 'Open' : 'Closed'}
+            </Text>
+          </View>
         </View>
       </View>
       <View className="p-4 flex-row items-center justify-between">

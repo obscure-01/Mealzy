@@ -1,6 +1,6 @@
 // src/components/common/CategoryChip.tsx
 import React from 'react';
-import { TouchableOpacity, Text, GestureResponderEvent } from 'react-native';
+import { TouchableOpacity, Text, GestureResponderEvent, View } from 'react-native';
 
 type CategoryChipProps = {
   label: string;
@@ -21,9 +21,11 @@ export const CategoryChip = React.memo(({ label, selected = false, onPress, clas
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
-      className={`${baseClasses} ${selectedClasses} ${className}`}
+      activeOpacity={0.8}
     >
-      <Text className={`font-label-lg whitespace-nowrap ${textClasses}`}>{label}</Text>
+      <View className={`${baseClasses} ${selectedClasses} ${className}`}>
+        <Text className={`font-label-lg whitespace-nowrap ${textClasses}`}>{label}</Text>
+      </View>
     </TouchableOpacity>
   );
 });

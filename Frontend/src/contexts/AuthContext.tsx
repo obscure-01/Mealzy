@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (phone_number: string, password: string) => Promise<void>;
   register: (data: { name: string; email: string; password: string; phone_number: string }) => Promise<void>;
   logout: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -85,8 +86,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  const refreshProfile = async () => {
+    try {
+      const token = await SecureStore.getItemAsync('access_token');
+      if (token) {
+        const userProfile = await authService.getUserProfile(token);
+        await SecureStore.setItemAsync('user', JSON.stringify(userProfile));
+        setUser(userProfile);
+      }
+    } catch (e) {
+      console.error('Failed to refresh profile:', e);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout: handleLogout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout: handleLogout, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

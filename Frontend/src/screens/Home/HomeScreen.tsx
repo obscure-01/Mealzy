@@ -36,6 +36,7 @@ export default function HomeScreen() {
     todaysSpecials,
     isLoading,
     error,
+    retry,
   } = useHomeData();
 
   // Local state for the search bar
@@ -53,7 +54,13 @@ export default function HomeScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background justify-center items-center px-4">
         <Text className="font-headline-md text-error mb-2">Oops!</Text>
-        <Text className="font-body-lg text-on-background text-center">{error}</Text>
+        <Text className="font-body-lg text-on-background text-center mb-6">{error}</Text>
+        <TouchableOpacity 
+          className="bg-primary px-6 py-3 rounded-full"
+          onPress={retry}
+        >
+          <Text className="text-white font-label-lg">Try Again</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -89,6 +96,10 @@ export default function HomeScreen() {
           token={activeOrder.token}
           status={activeOrder.status}
           readyInMinutes={activeOrder.readyInMinutes}
+          onPress={() => navigation.navigate('Orders' as any, { 
+            screen: 'OrderDetailsScreen', 
+            params: { orderId: parseInt(activeOrder.token, 10) } 
+          } as any)}
         />
         }
 
@@ -111,7 +122,7 @@ export default function HomeScreen() {
                   openingHours={item.openHours}
                   isOpen={(item as any).isOpen ?? true}
                   variant={index % 2 === 0 ? 'primary' : 'secondary'}
-                  onPress={() => navigation.navigate('CanteenMenuScreen', { canteenId: parseInt(item.id, 10), canteenName: item.name })}
+                  onPress={() => navigation.navigate('CanteenDetailScreen', { canteenId: parseInt(item.id, 10), canteenName: item.name })}
                 />
               ))}
             </View>

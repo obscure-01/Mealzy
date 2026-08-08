@@ -35,6 +35,18 @@ export const homeService = {
     }
   },
 
+  getCanteen: async (canteen_id: number): Promise<BackendCanteen | null> => {
+    try {
+      const response = await api.get(`/canteen/${canteen_id}`);
+      return response.data.canteen_data || null;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  },
+
   getAvailableMenu: async (canteen_id: number): Promise<BackendItem[]> => {
     try {
       const response = await api.get(`/menu/${canteen_id}`);

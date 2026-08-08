@@ -13,6 +13,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 
+import CanteenDetailScreen from '@/screens/Home/CanteenDetailScreen';
 import CanteenMenuScreen from '@/screens/Home/CanteenMenuScreen';
 import ItemDetailsScreen from '@/screens/Home/ItemDetailsScreen';
 import CartScreen from '@/screens/Home/CartScreen';
@@ -26,6 +27,7 @@ function HomeStackNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      <HomeStack.Screen name="CanteenDetailScreen" component={CanteenDetailScreen} />
       <HomeStack.Screen name="CanteenMenuScreen" component={CanteenMenuScreen} />
       <HomeStack.Screen name="ItemDetailsScreen" component={ItemDetailsScreen} />
       <HomeStack.Screen name="CartScreen" component={CartScreen} />
@@ -42,20 +44,20 @@ function OrdersStackNavigator() {
   );
 }
 
-const ProfileScreen = () => {
-  const { user, logout } = useAuth();
+import ProfileScreen from '@/screens/Profile/ProfileScreen';
+import EditProfileScreen from '@/screens/Profile/EditProfileScreen';
+import { ProfileStackParamList } from './types';
+
+const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
+
+function ProfileStackNavigator() {
   return (
-    <View style={{ flex: 1, backgroundColor: '#fdfdfd', justifyContent: 'center', alignItems: 'center' }}>
-      <Text className="font-headline-sm text-on-surface mb-4">Welcome, {user?.name}</Text>
-      <TouchableOpacity 
-        onPress={logout}
-        className="bg-primary px-6 py-3 rounded-2xl"
-      >
-        <Text className="text-white font-label-lg">Log Out</Text>
-      </TouchableOpacity>
-    </View>
+    <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+      <ProfileStack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <ProfileStack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+    </ProfileStack.Navigator>
   );
-};
+}
 
 const DummyScreen = () => <View style={{ flex: 1, backgroundColor: '#fdfdfd' }} />;
 
@@ -122,7 +124,7 @@ export function AppNavigator() {
         >
           <Tab.Screen name="Home" component={HomeStackNavigator} />
           <Tab.Screen name="Orders" component={OrdersStackNavigator} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Profile" component={ProfileStackNavigator} />
         </Tab.Navigator>
       ) : (
         <AuthNavigator />

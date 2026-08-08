@@ -121,7 +121,7 @@ export async function updateUser(req, res, next) {
         next(err);
     }
     finally {
-        if (req?.file.path) {
+        if (req?.file?.path) {
             try {
                 fs.unlinkSync(req.file.path);
             }
